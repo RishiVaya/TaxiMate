@@ -20,7 +20,7 @@ class _LoginPageState extends State<LoginPage> {
       try {
         await Auth().signInWithEmailAndPassword(
             emailController.text, passwordController.text);
-      } on FirebaseAuthException catch (e) {}
+      } on FirebaseAuthException catch (error) {}
     }
 
     return Scaffold(

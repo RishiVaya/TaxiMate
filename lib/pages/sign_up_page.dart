@@ -19,9 +19,14 @@ class _SignUpPageState extends State<SignUpPage> {
 
   Future<void> signUp() async {
     try {
-      await Auth().createUserWithEmailAndPassword(
-          emailController.text, passwordController.text);
-      signUpValid = true;
+      if (passwordController.text == confirmPassword.text) {
+        await Auth().createUserWithEmailAndPassword(
+            emailController.text, passwordController.text);
+        signUpValid = true;
+      } else {
+        signUpValid = false;
+        _showAlert(context, "Passwords do not match!");
+      }
     } on FirebaseAuthException catch (error) {
       log('data: $error');
       signUpValid = false;
