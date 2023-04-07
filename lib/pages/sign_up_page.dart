@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../auth/auth.dart';
+import 'dart:developer';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -14,12 +15,40 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPassword = TextEditingController();
+  bool signUpValid = true;
 
   Future<void> signUp() async {
     try {
       await Auth().createUserWithEmailAndPassword(
           emailController.text, passwordController.text);
-    } on FirebaseAuthException catch (e) {}
+      signUpValid = true;
+    } on FirebaseAuthException catch (error) {
+      log('data: $error');
+      signUpValid = false;
+      // Handle Errors here.
+      String errorMessage = error.message!;
+      _showAlert(context, errorMessage);
+    }
+  }
+
+  void _showAlert(BuildContext context, String error) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Alert!!"),
+          content: Text(error),
+          actions: <Widget>[
+            TextButton(
+              child: new Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -63,7 +92,9 @@ class _SignUpPageState extends State<SignUpPage> {
               onPressed: () async {
                 await signUp();
                 // ignore: use_build_context_synchronously
-                context.go('/home');
+                if (signUpValid) {
+                  context.go('/home');
+                }
               },
               child: const Text('Sign Up'),
             ),
