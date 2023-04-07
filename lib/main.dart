@@ -1,9 +1,26 @@
 import 'package:flutter/material.dart';
 import 'pages/login_page.dart';
+import 'pages/sign_up_page.dart';
+import 'package:go_router/go_router.dart';
 
 void main() {
   runApp(const MyApp());
 }
+
+// ROUTES
+final GoRouter _router = GoRouter(
+  initialLocation: '/login',
+  routes: [
+    GoRoute(
+      path: '/login',
+      builder: (context, state) => const LoginPage(),
+    ),
+    GoRoute(
+      path: '/signup',
+      builder: (context, state) => const SignUpPage(),
+    ),
+  ],
+);
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -11,7 +28,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'Flutter Demo',
       theme: ThemeData(
         // This is the theme of your application.
@@ -25,7 +42,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: LoginPage(),
+      routerConfig: _router,
     );
   }
 }

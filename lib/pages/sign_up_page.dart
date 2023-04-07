@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class SignUpPage extends StatefulWidget {
+  const SignUpPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmPassword = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Login Page'),
+        title: const Text('Sign Up Page'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -40,18 +41,27 @@ class _LoginPageState extends State<LoginPage> {
               obscureText: true,
             ),
             const SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {});
-              },
-              child: const Text('Login'),
+            TextFormField(
+              controller: confirmPassword,
+              decoration: const InputDecoration(
+                labelText: 'Confirm Password',
+                border: OutlineInputBorder(),
+              ),
+              obscureText: true,
             ),
             const SizedBox(height: 16.0),
             ElevatedButton(
               onPressed: () {
-                context.go('/signup');
+                setState(() {});
               },
-              child: const Text('Signup'),
+              child: const Text('Sign Up'),
+            ),
+            const SizedBox(height: 16.0),
+            ElevatedButton(
+              onPressed: () {
+                context.go('/login');
+              },
+              child: const Text('Login'),
             ),
           ],
         ),
