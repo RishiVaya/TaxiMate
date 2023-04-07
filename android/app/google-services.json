@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "920197730129",
+    "project_id": "taximate-5d2e2",
+    "storage_bucket": "taximate-5d2e2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:920197730129:android:204ed7921f5864dc53cd70",
+        "android_client_info": {
+          "package_name": "com.example.taximate"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "920197730129-ljukdtgmq53r1cvkca93818g9j7duk8m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAIwnPp4eg2UwBJ8qJE79JClJZDL6FMT-4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "920197730129-ljukdtgmq53r1cvkca93818g9j7duk8m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

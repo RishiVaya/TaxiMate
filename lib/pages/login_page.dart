@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../auth/auth.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -14,6 +16,13 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    Future<void> login() async {
+      try {
+        await Auth().signInWithEmailAndPassword(
+            emailController.text, passwordController.text);
+      } on FirebaseAuthException catch (e) {}
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Login Page'),
@@ -41,9 +50,7 @@ class _LoginPageState extends State<LoginPage> {
             ),
             const SizedBox(height: 16.0),
             ElevatedButton(
-              onPressed: () {
-                setState(() {});
-              },
+              onPressed: login,
               child: const Text('Login'),
             ),
             const SizedBox(height: 16.0),
