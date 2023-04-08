@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:taximate/firebase_firestore/firestore.dart';
 import 'package:taximate/pages/secrets.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import '../auth/auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'dart:math' show cos, sqrt, asin;
 
@@ -304,6 +307,12 @@ class _MapViewState extends State<MapView> {
     _getCurrentLocation();
   }
 
+  Future<void> logout() async {
+    try {
+      await Auth().signOut();
+    } on FirebaseAuthException catch (e) {}
+  }
+
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -458,6 +467,20 @@ class _MapViewState extends State<MapView> {
                 ),
               ),
             ),
+            Expanded(
+                child: Align(
+                    alignment: Alignment.bottomRight,
+                    child: ElevatedButton(
+                      onPressed: logout,
+                      child: const Text('LOGOUT'),
+                    ))),
+            Expanded(
+                child: Align(
+                    alignment: Alignment.bottomRight,
+                    child: ElevatedButton(
+                      onPressed: () => Firestore().getFirestoreUser(),
+                      child: const Text('Get'),
+                    )))
             // Show current location button
             //SafeArea(
             //  child: Align(
