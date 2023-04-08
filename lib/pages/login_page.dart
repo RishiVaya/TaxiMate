@@ -16,11 +16,33 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    void _showAlert(BuildContext context) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Alert!!"),
+            content: const Text("Please use a valid Username and Password!"),
+            actions: <Widget>[
+              TextButton(
+                child: const Text("OK"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+
     Future<void> login() async {
       try {
         await Auth().signInWithEmailAndPassword(
             emailController.text, passwordController.text);
-      } on FirebaseAuthException catch (error) {}
+      } on FirebaseAuthException catch (e) {
+        _showAlert(context);
+      }
     }
 
     return Scaffold(
