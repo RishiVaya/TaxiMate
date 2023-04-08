@@ -307,12 +307,6 @@ class _MapViewState extends State<MapView> {
     _getCurrentLocation();
   }
 
-  Future<void> logout() async {
-    try {
-      await Auth().signOut();
-    } on FirebaseAuthException catch (e) {}
-  }
-
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -467,20 +461,7 @@ class _MapViewState extends State<MapView> {
                 ),
               ),
             ),
-            Expanded(
-                child: Align(
-                    alignment: Alignment.bottomRight,
-                    child: ElevatedButton(
-                      onPressed: logout,
-                      child: const Text('LOGOUT'),
-                    ))),
-            Expanded(
-                child: Align(
-                    alignment: Alignment.bottomRight,
-                    child: ElevatedButton(
-                      onPressed: () => Firestore().getFirestoreUser(),
-                      child: const Text('Get'),
-                    )))
+
             // Show current location button
             //SafeArea(
             //  child: Align(
