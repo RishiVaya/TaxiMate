@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
             const Text("Home page2"),
             ElevatedButton(
               onPressed: logout,
-              child: const Text('Logou'),
+              child: const Text('Logout'),
             ),
             ElevatedButton(
               onPressed: () {
