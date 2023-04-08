@@ -10,6 +10,10 @@ environment:
   sdk: ">=2.19.6 <3.0.0"
 
 dependencies:
+  google_maps_flutter: ^2.2.0
+  geolocator: ^7.0.3
+  geocoding: ^2.0.0
+  flutter_polyline_points: ^1.0.0
   flutter:
     sdk: flutter
 
