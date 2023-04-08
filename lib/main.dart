@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'pages/login_page.dart';
 import 'pages/sign_up_page.dart';
 import 'pages/home_page.dart';
+import 'pages/google_maps.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'auth/auth.dart';
@@ -24,6 +25,10 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/signup',
       builder: (context, state) => const SignUpPage(),
+    ),
+    GoRoute(
+      path: '/maps',
+      builder: (context, state) => MapView(),
     ),
   ],
 );
@@ -99,7 +104,7 @@ class MainPage extends StatelessWidget {
             stream: FirebaseAuth.instance.authStateChanges(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return const HomePage();
+                return MapView();
               } else {
                 return const LoginPage();
               }
