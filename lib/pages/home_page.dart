@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:taximate/pages/login_page.dart';
 import '../auth/auth.dart';
+import 'package:go_router/go_router.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -32,8 +33,14 @@ class _HomePageState extends State<HomePage> {
             const Text("Home page2"),
             ElevatedButton(
               onPressed: logout,
-              child: const Text('Logout'),
-            )
+              child: const Text('Logou'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                context.go('/maps');
+              },
+              child: const Text('Maps'),
+            ),
           ],
         ),
       ),
