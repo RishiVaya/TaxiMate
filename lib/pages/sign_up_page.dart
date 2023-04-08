@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:taximate/firebase_firestore/firestore.dart';
 import '../auth/auth.dart';
 import 'dart:developer';
 
@@ -22,6 +23,7 @@ class _SignUpPageState extends State<SignUpPage> {
       if (passwordController.text == confirmPassword.text) {
         await Auth().createUserWithEmailAndPassword(
             emailController.text, passwordController.text);
+        await Firestore().createFirestoreUser(emailController.text, passwordController.text)
         signUpValid = true;
       } else {
         signUpValid = false;
