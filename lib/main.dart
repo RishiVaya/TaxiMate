@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:taximate/pages/profile_page.dart';
 import 'pages/login_page.dart';
 import 'pages/sign_up_page.dart';
 import 'pages/home_page.dart';
@@ -22,7 +21,7 @@ final GoRouter _router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => const MainPage(),
+      builder: (context, state) => MapView(),
     ),
     GoRoute(
       path: '/signup',
@@ -31,6 +30,10 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/maps',
       builder: (context, state) => MapView(),
+    ),
+    GoRoute(
+      path: '/login',
+      builder: (context, state) => const LoginPage(),
     ),
     GoRoute(
       path: '/profile',

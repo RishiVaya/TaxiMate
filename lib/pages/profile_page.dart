@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import '../auth/auth.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -13,29 +11,31 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController ageController = TextEditingController();
+  String _selectedValue = "";
+  List<String> listOfValue = ["Male", "Female", "Other"];
+
+  void _showAlert(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Alert!!"),
+          content: const Text("Please use a valid Username and Password!"),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    void _showAlert(BuildContext context) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text("Alert!!"),
-            content: const Text("Please use a valid Username and Password!"),
-            actions: <Widget>[
-              TextButton(
-                child: const Text("OK"),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Profile Page'),
@@ -59,7 +59,32 @@ class _ProfilePageState extends State<ProfilePage> {
                 labelText: 'Age',
                 border: OutlineInputBorder(),
               ),
-              obscureText: true,
+            ),
+            const SizedBox(height: 16.0),
+            DropdownButtonFormField(
+              value: _selectedValue.isNotEmpty ? _selectedValue : null,
+              hint: Text(
+                'Gender',
+              ),
+              isExpanded: true,
+              onChanged: (value) {
+                setState(() {
+                  _selectedValue = value!;
+                });
+              },
+              onSaved: (value) {
+                setState(() {
+                  _selectedValue = value!;
+                });
+              },
+              items: listOfValue.map((String val) {
+                return DropdownMenuItem(
+                  value: val,
+                  child: Text(
+                    val,
+                  ),
+                );
+              }).toList(),
             ),
             const SizedBox(height: 16.0),
             ElevatedButton(
