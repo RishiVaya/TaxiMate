@@ -16,14 +16,14 @@ class Firestore {
       String userId = firebaseUser.uid;
 
       var userRef = firestoreDB.collection('users');
-
-      userRef.doc(userId).set(userData as Map<String, dynamic>);
+      var userMap = {"name": userData.name, "email": userData.email};
+      userRef.doc(userId).set(userMap);
     }
     return null;
   }
 
   Future<void> updateFirestoreUser(
-    UserRequest userData,
+    Map<String, dynamic> userData,
   ) async {
     var firebaseUser = await Auth().currentUser();
     if (firebaseUser != null) {
@@ -33,9 +33,7 @@ class Firestore {
 
       // var userMap = {"name": userData.name, "email": userData.email};
 
-      userRef
-          .update(userData as Map<Object, Object?>)
-          .then((value) => print("Successfully updated"));
+      userRef.update(userData).then((value) => print("Successfully updated"));
     }
   }
 

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:taximate/firebase_firestore/firestore.dart';
+import 'package:taximate/models/user.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -14,24 +16,20 @@ class _ProfilePageState extends State<ProfilePage> {
   String _selectedValue = "";
   List<String> listOfValue = ["Male", "Female", "Other"];
 
-  void _showAlert(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text("Alert!!"),
-          content: const Text("Please use a valid Username and Password!"),
-          actions: <Widget>[
-            TextButton(
-              child: const Text("OK"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
+  Future<bool> updateUserInfo() async {
+    try {
+      Map<String, dynamic> userMap = {};
+      userMap["name"] = nameController.text;
+      userMap["age"] = int.parse(ageController.text);
+      if (_selectedValue != "") {
+        userMap["gender"] = _selectedValue;
+      }
+      await Firestore().updateFirestoreUser(userMap);
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
   }
 
   @override
@@ -88,7 +86,9 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             const SizedBox(height: 16.0),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                updateUserInfo();
+              },
               child: const Text('Save'),
             ),
             const SizedBox(height: 16.0),
