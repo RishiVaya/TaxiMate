@@ -1,5 +1,5 @@
 import 'dart:ffi';
-
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:taximate/auth/auth.dart';
 import 'package:taximate/models/trip_data.dart';
@@ -9,15 +9,15 @@ class Firestore {
   FirebaseFirestore firestoreDB = FirebaseFirestore.instance;
 
   Future<UserResponse?> createFirestoreUser(
-    UserRequest userData,
+    Map<String, dynamic> userData,
   ) async {
     var firebaseUser = await Auth().currentUser();
     if (firebaseUser != null) {
       String userId = firebaseUser.uid;
 
       var userRef = firestoreDB.collection('users');
-      var userMap = {"name": userData.name, "email": userData.email};
-      userRef.doc(userId).set(userMap);
+
+      userRef.doc(userId).set(userData);
     }
     return null;
   }
@@ -30,8 +30,6 @@ class Firestore {
       String userId = firebaseUser.uid;
 
       var userRef = firestoreDB.collection('users').doc(userId);
-
-      // var userMap = {"name": userData.name, "email": userData.email};
 
       userRef.update(userData).then((value) => print("Successfully updated"));
     }
@@ -50,21 +48,30 @@ class Firestore {
     return null;
   }
 
-  Future<void> createCarpoolRequest(String name, TripData tripDetails) async {
+  Future<String?> createCarpoolRequest(Map<String, dynamic> tripDetails) async {
     var firebaseUser = await Auth().currentUser();
     if (firebaseUser != null) {
       String userId = firebaseUser.uid;
       String? tripId = await addTripData(tripDetails);
 
       if (tripId == null) {
-        return;
+        return null;
       }
 
       var ref = firestoreDB.collection('carpool_request');
-      var requestMap = {"accepted": false, userId: userId, tripId: tripId};
+      var requestMap = {
+        "userId": userId,
+        "tripId": tripId,
+        "accepted": false,
+      };
 
-      var req =
-          ref.add(requestMap).then((documentSnapshot) => documentSnapshot);
+      var reqId = await ref
+          .add(requestMap)
+          .then((documentSnapshot) => documentSnapshot.id);
+
+      return reqId;
+    } else {
+      return null;
     }
   }
 
@@ -112,7 +119,6 @@ class Firestore {
 
     if (firebaseUser != null) {
       String userId = firebaseUser.uid;
-      String tripId = "";
 
       var ref = firestoreDB.collection('ratings');
       var requestMap = {
@@ -125,16 +131,18 @@ class Firestore {
     }
   }
 
-  Future<String?> addTripData(TripData tripDetails) async {
+  Future<String?> addTripData(Map<String, dynamic> tripDetails) async {
     var firebaseUser = await Auth().currentUser();
     if (firebaseUser != null) {
       String userId = firebaseUser.uid;
 
       var ref = firestoreDB.collection('carpool_offer');
 
-      ref.add(tripDetails as Map<String, dynamic>);
+      var tripId = await ref
+          .add(tripDetails)
+          .then((documentSnapshot) => documentSnapshot.id);
 
-      return ref.id;
+      return tripId;
     }
     return null;
   }

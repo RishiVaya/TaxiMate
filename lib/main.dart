@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:taximate/models/app_data.dart';
+import 'package:taximate/pages/criteria.dart';
 import 'package:taximate/providers/app_data.dart';
 import 'pages/login_page.dart';
 import 'pages/sign_up_page.dart';
@@ -22,19 +24,19 @@ final GoRouter _router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => MapView(),
+      builder: (context, state) => MainPage(),
     ),
     GoRoute(
       path: '/signup',
       builder: (context, state) => const SignUpPage(),
     ),
+    // GoRoute(
+    //   path: '/maps',
+    //   builder: (context, state) => MapView(),
+    // ),
     GoRoute(
-      path: '/maps',
-      builder: (context, state) => MapView(),
-    ),
-    GoRoute(
-      path: '/login',
-      builder: (context, state) => const LoginPage(),
+      path: '/criteria',
+      builder: (context, state) => CriteriaPage(),
     ),
     GoRoute(
       path: '/profile',
@@ -49,8 +51,11 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (BuildContext context) => AppData(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider<AppDataModel>(
+            create: (BuildContext context) => AppDataModel())
+      ],
       child: MaterialApp.router(
         title: 'Flutter Demo',
         theme: ThemeData(

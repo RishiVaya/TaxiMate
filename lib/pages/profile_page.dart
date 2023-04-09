@@ -32,75 +32,101 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  int _currentIndex = 0;
+  Map<int, String> pagesMap = {0: '/', 1: '/login', 2: '/profile'};
+
+  void _onTabTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+    context.go('${pagesMap[index]}');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Profile Page'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            TextFormField(
-              controller: nameController,
-              decoration: const InputDecoration(
-                labelText: 'Name',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            TextFormField(
-              controller: ageController,
-              decoration: const InputDecoration(
-                labelText: 'Age',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            DropdownButtonFormField(
-              value: _selectedValue.isNotEmpty ? _selectedValue : null,
-              hint: Text(
-                'Gender',
-              ),
-              isExpanded: true,
-              onChanged: (value) {
-                setState(() {
-                  _selectedValue = value!;
-                });
-              },
-              onSaved: (value) {
-                setState(() {
-                  _selectedValue = value!;
-                });
-              },
-              items: listOfValue.map((String val) {
-                return DropdownMenuItem(
-                  value: val,
-                  child: Text(
-                    val,
-                  ),
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () {
-                updateUserInfo();
-              },
-              child: const Text('Save'),
-            ),
-            const SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: () {
-                context.go('/maps');
-              },
-              child: const Text('Home'),
-            ),
-          ],
+        appBar: AppBar(
+          title: const Text('Profile Page'),
         ),
-      ),
-    );
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              TextFormField(
+                controller: nameController,
+                decoration: const InputDecoration(
+                  labelText: 'Name',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16.0),
+              TextFormField(
+                controller: ageController,
+                decoration: const InputDecoration(
+                  labelText: 'Age',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16.0),
+              DropdownButtonFormField(
+                value: _selectedValue.isNotEmpty ? _selectedValue : null,
+                hint: Text(
+                  'Gender',
+                ),
+                isExpanded: true,
+                onChanged: (value) {
+                  setState(() {
+                    _selectedValue = value!;
+                  });
+                },
+                onSaved: (value) {
+                  setState(() {
+                    _selectedValue = value!;
+                  });
+                },
+                items: listOfValue.map((String val) {
+                  return DropdownMenuItem(
+                    value: val,
+                    child: Text(
+                      val,
+                    ),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 16.0),
+              ElevatedButton(
+                onPressed: () {
+                  updateUserInfo();
+                },
+                child: const Text('Save'),
+              ),
+              const SizedBox(height: 16.0),
+              ElevatedButton(
+                onPressed: () {
+                  context.go('/maps');
+                },
+                child: const Text('Home'),
+              ),
+            ],
+          ),
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+            currentIndex: _currentIndex,
+            onTap: _onTabTapped,
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.search),
+                label: 'Search',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person),
+                label: 'Profile',
+              ),
+            ]));
   }
 }
