@@ -31,7 +31,6 @@ class Firestore {
 
       var userRef = firestoreDB.collection('users').doc(userId);
 
-      // var parsedData = json.decode(userData.toString());
       userRef.update(userData).then((value) => print("Successfully updated"));
     }
   }

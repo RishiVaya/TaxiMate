@@ -6,6 +6,7 @@ import 'pages/login_page.dart';
 import 'pages/sign_up_page.dart';
 import 'pages/home_page.dart';
 import 'pages/google_maps.dart';
+import 'pages/profile_page.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,19 +24,23 @@ final GoRouter _router = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      builder: (context, state) => const MainPage(),
+      builder: (context, state) => MainPage(),
     ),
     GoRoute(
       path: '/signup',
       builder: (context, state) => const SignUpPage(),
     ),
-    GoRoute(
-      path: '/maps',
-      builder: (context, state) => MapView(),
-    ),
+    // GoRoute(
+    //   path: '/maps',
+    //   builder: (context, state) => MapView(),
+    // ),
     GoRoute(
       path: '/criteria',
       builder: (context, state) => CriteriaPage(),
+    ),
+    GoRoute(
+      path: '/profile',
+      builder: (context, state) => const ProfilePage(),
     ),
   ],
 );

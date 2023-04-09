@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -10,10 +11,13 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:go_router/go_router.dart';
 import '../auth/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'dart:math' show cos, sqrt, asin;
+
+import '../auth/auth.dart';
 
 class MapView extends StatefulWidget {
   @override
@@ -100,7 +104,6 @@ class _MapViewState extends State<MapView> {
         .then((Position position) async {
       setState(() {
         _currentPosition = position;
-        print('CURRENT POS: $_currentPosition');
         mapController.animateCamera(
           CameraUpdate.newCameraPosition(
             CameraPosition(
@@ -111,9 +114,7 @@ class _MapViewState extends State<MapView> {
         );
       });
       await _getAddress();
-    }).catchError((e) {
-      print(e);
-    });
+    }).catchError((e) {});
   }
 
   // Method for retrieving the address
@@ -130,9 +131,7 @@ class _MapViewState extends State<MapView> {
         startAddressController.text = _currentAddress;
         _startAddress = _currentAddress;
       });
-    } catch (e) {
-      print(e);
-    }
+    } catch (e) {}
   }
 
   // Method for calculating the distance between two places
@@ -186,13 +185,6 @@ class _MapViewState extends State<MapView> {
       // Adding the markers to the list
       markers.add(startMarker);
       markers.add(destinationMarker);
-
-      print(
-        'START COORDINATES: ($startLatitude, $startLongitude)',
-      );
-      print(
-        'DESTINATION COORDINATES: ($destinationLatitude, $destinationLongitude)',
-      );
 
       // Calculating to check that the position relative
       // to the frame, and pan & zoom the camera accordingly.
@@ -254,13 +246,10 @@ class _MapViewState extends State<MapView> {
 
       setState(() {
         _placeDistance = totalDistance.toStringAsFixed(2);
-        print('DISTANCE: $_placeDistance km');
       });
 
       return true;
-    } catch (e) {
-      print(e);
-    }
+    } catch (e) {}
     return false;
   }
 
@@ -310,6 +299,20 @@ class _MapViewState extends State<MapView> {
   void initState() {
     super.initState();
     _getCurrentLocation();
+  }
+
+  Future<void> logout() async {
+    try {
+      await Auth().signOut();
+      context.go('/login');
+    } on FirebaseAuthException catch (e) {}
+  }
+
+  // change to send trip data to firebase db
+  void planTrip() async {
+    try {
+      await Auth().signOut();
+    } on FirebaseAuthException catch (e) {}
   }
 
   @override
@@ -509,7 +512,22 @@ class _MapViewState extends State<MapView> {
                 ),
               ),
             ),
-
+            Expanded(
+                child: Align(
+                    alignment: Alignment.bottomRight,
+                    child: ElevatedButton(
+                      onPressed: logout,
+                      child: const Text('LOGOUT'),
+                    ))),
+            Expanded(
+                child: Align(
+                    alignment: Alignment.bottomLeft,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        context.go('/profile');
+                      },
+                      child: const Text('PROFILE'),
+                    ))),
             // Show current location button
             //SafeArea(
             //  child: Align(

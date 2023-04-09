@@ -40,6 +40,8 @@ class _LoginPageState extends State<LoginPage> {
       try {
         await Auth().signInWithEmailAndPassword(
             emailController.text, passwordController.text);
+        // ignore: use_build_context_synchronously
+        context.go('/');
       } on FirebaseAuthException catch (e) {
         _showAlert(context);
       }
