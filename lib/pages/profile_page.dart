@@ -18,7 +18,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<bool> updateUserInfo() async {
     try {
-      var userMap = {};
+      Map<String, dynamic> userMap = {};
       userMap["name"] = nameController.text;
       userMap["age"] = int.parse(ageController.text);
       if (_selectedValue != "") {

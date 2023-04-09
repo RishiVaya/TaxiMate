@@ -23,7 +23,7 @@ class Firestore {
   }
 
   Future<void> updateFirestoreUser(
-    Map<dynamic, dynamic> userData,
+    Map<String, dynamic> userData,
   ) async {
     var firebaseUser = await Auth().currentUser();
     if (firebaseUser != null) {
@@ -33,9 +33,7 @@ class Firestore {
 
       // var userMap = {"name": userData.name, "email": userData.email};
 
-      userRef
-          .update(userData as Map<Object, Object?>)
-          .then((value) => print("Successfully updated"));
+      userRef.update(userData).then((value) => print("Successfully updated"));
     }
   }
 
