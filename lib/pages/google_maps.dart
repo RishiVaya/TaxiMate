@@ -299,6 +299,7 @@ class _MapViewState extends State<MapView> {
   Future<void> logout() async {
     try {
       await Auth().signOut();
+      context.go('/login');
     } on FirebaseAuthException catch (e) {}
   }
 
