@@ -1,0 +1,105 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+class CriteriaPage extends StatefulWidget {
+  const CriteriaPage({super.key});
+
+  @override
+  State<CriteriaPage> createState() => _CriteriaPageState();
+}
+
+class _CriteriaPageState extends State<CriteriaPage> {
+  List<String> listOfValueForGenders = ["Male", "Female", "Other"];
+  String _selectedGender = '';
+  String _selectedRating = '';
+  List<String> listOfValueForRatings = ["5.0", "4.0", "3.0", "2.0"];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Optional Criteria'),
+      ),
+      body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new_sharp),
+                tooltip: 'Increase volume by 10',
+                onPressed: () {
+                  context.go('/');
+                },
+              ),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  const SizedBox(height: 80.0),
+                  DropdownButtonFormField(
+                    value: _selectedGender.isNotEmpty ? _selectedGender : null,
+                    hint: Text('Gender'),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedGender = value!;
+                      });
+                    },
+                    onSaved: (value) {
+                      setState(() {
+                        _selectedGender = value!;
+                      });
+                    },
+                    items: listOfValueForGenders.map((String val) {
+                      return DropdownMenuItem(
+                        value: val,
+                        child: Text(
+                          val,
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 64.0),
+                  DropdownButtonFormField(
+                    value: _selectedRating.isNotEmpty ? _selectedRating : null,
+                    hint: Text('Rating'),
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedRating = value!;
+                      });
+                    },
+                    onSaved: (value) {
+                      setState(() {
+                        _selectedRating = value!;
+                      });
+                    },
+                    items: listOfValueForRatings.map((String val) {
+                      return DropdownMenuItem(
+                        value: val,
+                        child: Text(
+                          val,
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  const SizedBox(height: 64.0),
+                  ElevatedButton(
+                    onPressed: () => print('submit'),
+                    //
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'Submit'.toUpperCase(),
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          )),
+    );
+  }
+}

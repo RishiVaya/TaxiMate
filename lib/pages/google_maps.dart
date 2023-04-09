@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:taximate/firebase_firestore/firestore.dart';
 import 'package:taximate/pages/secrets.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -311,6 +312,12 @@ class _MapViewState extends State<MapView> {
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
+
+    // change to send trip data to firebase db
+    void planTrip() async {
+      context.go('/criteria');
+    }
+
     return Container(
       height: height,
       width: width,
@@ -441,6 +448,26 @@ class _MapViewState extends State<MapView> {
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
                                 'Show Route'.toUpperCase(),
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20.0,
+                                ),
+                              ),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.red,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                              ),
+                            ),
+                          ),
+                          ElevatedButton(
+                            onPressed: planTrip,
+                            //
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                'Plan Trip'.toUpperCase(),
                                 style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 20.0,

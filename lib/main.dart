@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taximate/pages/criteria.dart';
 import 'package:taximate/providers/app_data.dart';
 import 'pages/login_page.dart';
 import 'pages/sign_up_page.dart';
@@ -30,6 +31,10 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/maps',
       builder: (context, state) => MapView(),
+    ),
+    GoRoute(
+      path: '/criteria',
+      builder: (context, state) => CriteriaPage(),
     ),
   ],
 );
