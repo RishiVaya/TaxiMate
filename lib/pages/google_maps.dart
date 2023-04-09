@@ -479,12 +479,12 @@ class _MapViewState extends State<MapView> {
                             ),
                           ),
                           ElevatedButton(
-                            onPressed: (_startAddress != '' &&
-                                    _destinationAddress != '')
-                                ? () async {
-                                    planTrip;
-                                  }
-                                : null,
+                            onPressed: () {
+                              if (_startAddress != '' &&
+                                  _destinationAddress != '') {
+                                planTrip();
+                              }
+                            },
                             //
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
