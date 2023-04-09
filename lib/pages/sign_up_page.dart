@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:taximate/firebase_firestore/firestore.dart';
+import 'package:taximate/models/user.dart';
 import '../auth/auth.dart';
 import 'dart:developer';
 
@@ -12,6 +14,7 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPassword = TextEditingController();
@@ -22,6 +25,12 @@ class _SignUpPageState extends State<SignUpPage> {
       if (passwordController.text == confirmPassword.text) {
         await Auth().createUserWithEmailAndPassword(
             emailController.text, passwordController.text);
+
+        var user = UserRequest();
+        user.name = nameController.text;
+        user.email = emailController.text;
+
+        await Firestore().createFirestoreUser(user);
         signUpValid = true;
       } else {
         signUpValid = false;
@@ -68,6 +77,13 @@ class _SignUpPageState extends State<SignUpPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             TextFormField(
+              controller: nameController,
+              decoration: const InputDecoration(
+                labelText: 'Name',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            TextFormField(
               controller: emailController,
               decoration: const InputDecoration(
                 labelText: 'Email',
@@ -98,7 +114,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 await signUp();
                 // ignore: use_build_context_synchronously
                 if (signUpValid) {
-                  context.go('/home');
+                  context.go('/');
                 }
               },
               child: const Text('Sign Up'),

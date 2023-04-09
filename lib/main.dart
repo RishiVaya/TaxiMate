@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:taximate/providers/app_data.dart';
 import 'pages/login_page.dart';
 import 'pages/sign_up_page.dart';
 import 'pages/home_page.dart';
@@ -6,8 +7,8 @@ import 'pages/google_maps.dart';
 import 'pages/profile_page.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'auth/auth.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,12 +49,15 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return ChangeNotifierProvider(
+      create: (BuildContext context) => AppData(),
+      child: MaterialApp.router(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        routerConfig: _router,
       ),
-      routerConfig: _router,
     );
   }
 }
