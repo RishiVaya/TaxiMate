@@ -1,6 +1,7 @@
 import 'dart:ffi';
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:maps_toolkit/maps_toolkit.dart';
 import 'package:taximate/auth/auth.dart';
 import 'package:taximate/models/trip_data.dart';
 import 'package:taximate/models/user.dart';
@@ -147,27 +148,55 @@ class Firestore {
     return null;
   }
 
-  Future<Map<String, dynamic>?> getRelevantOffersByRequest(String reqId) async {
+  Future<List> getRelevantOffersByRequest(String reqId) async {
     var requestRef = firestoreDB.collection('carpool_requests');
     var offerRef = firestoreDB.collection('carpool_offers');
+    var tripRef = firestoreDB.collection('trip_data');
+    var userRef = firestoreDB.collection('users');
 
     // get request
-    var request = (await requestRef.doc(reqId).get()).data();
+    var request = {"id": reqId, ...?(await requestRef.doc(reqId).get()).data()};
+
+    var reqTripDetails = (await tripRef.doc(request["tripId"]).get()).data();
+
+    if (reqTripDetails == null) {
+      return [];
+    }
+
+    // Request latitude and longtitude points
+    var reqStartPoint = LatLng(reqTripDetails["pickup"]["latitude"],
+        reqTripDetails["pickup"]["longitude"]);
+    var reqEndPoint = LatLng(reqTripDetails["dropoff"]["latitude"],
+        reqTripDetails["dropoff"]["longitude"]);
 
     // get active offers
     var activeOffers = (await offerRef.where("active", isEqualTo: true).get())
         .docs
         .map((doc) => doc.data());
 
-    // get tripInfo for each offer
+    var offersList = [];
 
-    // filter based on location
+    for (var offer in activeOffers) {
+      var offTripDetails = (await tripRef.doc(offer["tripId"]).get()).data();
+      var offStartPoint = LatLng(offTripDetails!["pickup"]["latitude"],
+          offTripDetails!["pickup"]["longitude"]);
+      var offEndPoint = LatLng(offTripDetails["dropoff"]["latitude"],
+          offTripDetails!["dropoff"]["longitude"]);
+      List<LatLng> polyline = [offStartPoint, offEndPoint];
 
-    // filter based on criteria
+      var startPointCheck =
+          PolygonUtil.isLocationOnPath(reqStartPoint, polyline, false);
+      var endPointCheck =
+          PolygonUtil.isLocationOnPath(reqEndPoint, polyline, false);
 
-    print(activeOffers.toList());
-    return null;
+      // If start and end points are within offeror's route, add to list
+      if (startPointCheck && endPointCheck) {
+        var offeror = (await userRef.doc(offer["userId"]).get()).data();
+        var offerMap = {...offTripDetails, ...?offeror};
+        offersList.add(offerMap);
+      }
+    }
 
-    // get all offers
+    return offersList;
   }
 }

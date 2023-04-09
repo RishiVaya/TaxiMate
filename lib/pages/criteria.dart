@@ -28,8 +28,8 @@ class _CriteriaPageState extends State<CriteriaPage> {
 
     void onSubmit() async {
       // save to db
-      var pickupAddress = appData.startAddress;
-      var destAddress = appData.destinationAddress;
+      var pickupAddress = appData.startAddressObj;
+      var destAddress = appData.destinationAddressObj;
 
       var tripDataMap = {
         "pickup": pickupAddress,
@@ -42,13 +42,13 @@ class _CriteriaPageState extends State<CriteriaPage> {
 
       // var reqId = await Firestore().createCarpoolRequest(tripDataMap);
 
-      await Firestore().getRelevantOffersByRequest("ds");
+      await Firestore().getRelevantOffersByRequest('zpT2r5RaFO28T3e8zWRW');
 
       // print("HEY ${reqId}");
 
       // if (reqId == null) {
       //   // TODO: show error message
-      //   return;
+      // return;
       // }
 
       // update app data

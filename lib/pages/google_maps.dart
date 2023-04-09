@@ -316,8 +316,15 @@ class _MapViewState extends State<MapView> {
 
     // change to send trip data to firebase db
     void planTrip() async {
-      appData.updateStartAddress(_startAddress);
-      appData.updateDestinationAddress(_destinationAddress);
+      List<Location> startPlacemark = await locationFromAddress(_startAddress);
+      List<Location> destinationPlacemark =
+          await locationFromAddress(_destinationAddress);
+
+      appData.updateStartAddress(_startAddress, startPlacemark[0].latitude,
+          startPlacemark[0].longitude);
+      appData.updateDestinationAddress(_destinationAddress,
+          destinationPlacemark[0].latitude, destinationPlacemark[0].longitude);
+
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const CriteriaPage()),
