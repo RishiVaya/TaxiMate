@@ -32,7 +32,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  int _currentIndex = 0;
+  int _currentIndex = 2;
   Map<int, String> pagesMap = {0: '/', 1: '/login', 2: '/profile'};
 
   void _onTabTapped(int index) {
@@ -113,6 +113,8 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         bottomNavigationBar: BottomNavigationBar(
             currentIndex: _currentIndex,
+            unselectedItemColor: Colors.black,
+            selectedItemColor: Colors.blue,
             onTap: _onTabTapped,
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(

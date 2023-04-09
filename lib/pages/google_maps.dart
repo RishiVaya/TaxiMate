@@ -567,6 +567,8 @@ class _MapViewState extends State<MapView> {
         ),
         bottomNavigationBar: BottomNavigationBar(
             currentIndex: _currentIndex,
+            unselectedItemColor: Colors.black,
+            selectedItemColor: Colors.blue,
             onTap: _onTabTapped,
             items: const <BottomNavigationBarItem>[
               BottomNavigationBarItem(
