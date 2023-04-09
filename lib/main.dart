@@ -30,10 +30,10 @@ final GoRouter _router = GoRouter(
       path: '/signup',
       builder: (context, state) => const SignUpPage(),
     ),
-    // GoRoute(
-    //   path: '/maps',
-    //   builder: (context, state) => MapView(),
-    // ),
+    GoRoute(
+      path: '/login',
+      builder: (context, state) => const LoginPage(),
+    ),
     GoRoute(
       path: '/criteria',
       builder: (context, state) => CriteriaPage(),

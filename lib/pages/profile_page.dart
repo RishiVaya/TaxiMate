@@ -1,7 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:taximate/firebase_firestore/firestore.dart';
 import 'package:taximate/models/user.dart';
+
+import '../auth/auth.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -40,6 +43,13 @@ class _ProfilePageState extends State<ProfilePage> {
       _currentIndex = index;
     });
     context.go('${pagesMap[index]}');
+  }
+
+  Future<void> logout() async {
+    try {
+      await Auth().signOut();
+      context.go('/login');
+    } on FirebaseAuthException catch (e) {}
   }
 
   @override
@@ -104,9 +114,9 @@ class _ProfilePageState extends State<ProfilePage> {
               const SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: () {
-                  context.go('/maps');
+                  logout();
                 },
-                child: const Text('Home'),
+                child: const Text('Logout'),
               ),
             ],
           ),

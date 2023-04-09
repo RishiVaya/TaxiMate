@@ -308,13 +308,6 @@ class _MapViewState extends State<MapView> {
     } on FirebaseAuthException catch (e) {}
   }
 
-  // change to send trip data to firebase db
-  void planTrip() async {
-    try {
-      await Auth().signOut();
-    } on FirebaseAuthException catch (e) {}
-  }
-
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
@@ -486,7 +479,12 @@ class _MapViewState extends State<MapView> {
                             ),
                           ),
                           ElevatedButton(
-                            onPressed: planTrip,
+                            onPressed: (_startAddress != '' &&
+                                    _destinationAddress != '')
+                                ? () async {
+                                    planTrip;
+                                  }
+                                : null,
                             //
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
@@ -512,57 +510,22 @@ class _MapViewState extends State<MapView> {
                 ),
               ),
             ),
-            Expanded(
-                child: Align(
-                    alignment: Alignment.bottomRight,
-                    child: ElevatedButton(
-                      onPressed: logout,
-                      child: const Text('LOGOUT'),
-                    ))),
-            Expanded(
-                child: Align(
-                    alignment: Alignment.bottomLeft,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        context.go('/profile');
-                      },
-                      child: const Text('PROFILE'),
-                    ))),
-            // Show current location button
-            //SafeArea(
-            //  child: Align(
-            //    alignment: Alignment.bottomRight,
-            //    child: Padding(
-            //      padding: const EdgeInsets.only(right: 10.0, bottom: 10.0),
-            //      child: ClipOval(
-            //        child: Material(
-            //          color: Colors.orange.shade100, // button color
-            //          child: InkWell(
-            //            splashColor: Colors.orange, // inkwell color
-            //            child: SizedBox(
-            //              width: 56,
-            //              height: 56,
-            //              child: Icon(Icons.my_location),
-            //            ),
-            //            onTap: () {
-            //              mapController.animateCamera(
-            //                CameraUpdate.newCameraPosition(
-            //                  CameraPosition(
-            //                    target: LatLng(
-            //                      _currentPosition.latitude,
-            //                      _currentPosition.longitude,
-            //                    ),
-            //                    zoom: 18.0,
-            //                  ),
-            //                ),
-            //              );
-            //            },
-            //          ),
-            //        ),
-            //      ),
-            //    ),
-            //  ),
-            //),
+            //Expanded(
+            //    child: Align(
+            //        alignment: Alignment.bottomRight,
+            //        child: ElevatedButton(
+            //          onPressed: logout,
+            //          child: const Text('LOGOUT'),
+            //        ))),
+            //Expanded(
+            //    child: Align(
+            //        alignment: Alignment.bottomLeft,
+            //        child: ElevatedButton(
+            //          onPressed: () {
+            //            context.go('/profile');
+            //          },
+            //          child: const Text('PROFILE'),
+            //        ))),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
