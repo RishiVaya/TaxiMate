@@ -6,8 +6,6 @@ class TripData {
   String? fare;
   String? pickup;
   List<String>? userIds;
-
-  TripData({this.criteria, this.dropoff, this.fare, this.pickup, this.userIds});
 }
 
 class TripDataResponse {

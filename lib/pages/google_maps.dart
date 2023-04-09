@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:taximate/components/bottom_navigation.dart';
 import 'package:taximate/firebase_firestore/firestore.dart';
+import 'package:taximate/models/app_data.dart';
+import 'package:taximate/pages/criteria.dart';
 import 'package:taximate/pages/secrets.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geocoding/geocoding.dart';
@@ -312,10 +316,27 @@ class _MapViewState extends State<MapView> {
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
+    var appData = context.watch<AppDataModel>();
 
     // change to send trip data to firebase db
     void planTrip() async {
-      context.go('/criteria');
+      appData.updateStartAddress(_startAddress);
+      appData.updateDestinationAddress(_destinationAddress);
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const CriteriaPage()),
+      );
+      // await Auth().signOut();
+    }
+
+    int _currentIndex = 0;
+    Map<int, String> pagesMap = {0: '/', 1: '/login', 2: '/profile'};
+
+    void _onTabTapped(int index) {
+      setState(() {
+        _currentIndex = index;
+      });
+      context.go('${pagesMap[index]}');
     }
 
     return Container(
@@ -526,6 +547,23 @@ class _MapViewState extends State<MapView> {
             //),
           ],
         ),
+        bottomNavigationBar: BottomNavigationBar(
+            currentIndex: _currentIndex,
+            onTap: _onTabTapped,
+            items: const <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                label: 'Home',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.search),
+                label: 'Search',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person),
+                label: 'Profile',
+              ),
+            ]),
       ),
     );
   }

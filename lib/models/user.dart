@@ -6,8 +6,6 @@ class UserRequest {
   String? gender;
   Int? age;
   Int? rating;
-
-  UserRequest({this.name, this.email, this.gender, this.age, this.rating});
 }
 
 class UserResponse {

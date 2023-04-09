@@ -26,11 +26,12 @@ class _SignUpPageState extends State<SignUpPage> {
         await Auth().createUserWithEmailAndPassword(
             emailController.text, passwordController.text);
 
-        var user = UserRequest();
-        user.name = nameController.text;
-        user.email = emailController.text;
+        // var user = UserRequest();
+        // user.name = nameController.text;
+        // user.email = emailController.text;
 
-        await Firestore().createFirestoreUser(user);
+        await Firestore().createFirestoreUser(
+            {"name": nameController.text, "email": emailController.text});
         signUpValid = true;
       } else {
         signUpValid = false;

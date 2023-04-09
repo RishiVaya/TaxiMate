@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:taximate/firebase_firestore/firestore.dart';
+import 'package:taximate/models/app_data.dart';
+import 'package:taximate/components/bottom_navigation.dart';
 
 class CriteriaPage extends StatefulWidget {
   const CriteriaPage({super.key});
@@ -12,10 +16,43 @@ class _CriteriaPageState extends State<CriteriaPage> {
   List<String> listOfValueForGenders = ["Male", "Female", "Other"];
   String _selectedGender = '';
   String _selectedRating = '';
-  List<String> listOfValueForRatings = ["5.0", "4.0", "3.0", "2.0"];
+  List<Map<String, String>> listOfValueForRatings = [
+    {"text": ">4.0", "value": "4.0"},
+    {"text": ">3.0", "value": "3.0"},
+    {"text": ">2.0", "value": "2.0"}
+  ];
 
   @override
   Widget build(BuildContext context) {
+    var appData = context.watch<AppDataModel>();
+
+    void onSubmit() async {
+      // save to db
+      var pickupAddress = appData.startAddress;
+      var destAddress = appData.destinationAddress;
+
+      var tripDataMap = {
+        "pickup": pickupAddress,
+        "dropoff": destAddress,
+        "criteria": {
+          "gender": _selectedGender,
+          "desiredRating": _selectedRating
+        }
+      };
+
+      var reqId = await Firestore().createCarpoolRequest(tripDataMap);
+
+      if (reqId == null) {
+        // show error message
+        return;
+      }
+
+      // update app data
+      appData.updateRequestId(reqId);
+
+      // navigate to offer list page
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Optional Criteria'),
@@ -25,13 +62,6 @@ class _CriteriaPageState extends State<CriteriaPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new_sharp),
-                tooltip: 'Increase volume by 10',
-                onPressed: () {
-                  context.go('/');
-                },
-              ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: <Widget>[
@@ -72,18 +102,18 @@ class _CriteriaPageState extends State<CriteriaPage> {
                         _selectedRating = value!;
                       });
                     },
-                    items: listOfValueForRatings.map((String val) {
+                    items: listOfValueForRatings.map((Map<String, String> val) {
                       return DropdownMenuItem(
-                        value: val,
+                        value: val["value"],
                         child: Text(
-                          val,
+                          val["text"]!,
                         ),
                       );
                     }).toList(),
                   ),
                   const SizedBox(height: 64.0),
                   ElevatedButton(
-                    onPressed: () => print('submit'),
+                    onPressed: () => print("${appData.destinationAddress}"),
                     //
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
