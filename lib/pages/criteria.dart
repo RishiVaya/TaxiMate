@@ -40,17 +40,19 @@ class _CriteriaPageState extends State<CriteriaPage> {
         }
       };
 
-      var reqId = await Firestore().createCarpoolRequest(tripDataMap);
+      // var reqId = await Firestore().createCarpoolRequest(tripDataMap);
 
-      print("HEY ${reqId}");
+      await Firestore().getRelevantOffersByRequest("ds");
 
-      if (reqId == null) {
-        // TODO: show error message
-        return;
-      }
+      // print("HEY ${reqId}");
+
+      // if (reqId == null) {
+      //   // TODO: show error message
+      //   return;
+      // }
 
       // update app data
-      appData.updateRequestId(reqId);
+      // appData.updateRequestId(reqId);
 
       // navigate to offer list page
     }

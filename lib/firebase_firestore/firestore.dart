@@ -146,4 +146,28 @@ class Firestore {
     }
     return null;
   }
+
+  Future<Map<String, dynamic>?> getRelevantOffersByRequest(String reqId) async {
+    var requestRef = firestoreDB.collection('carpool_requests');
+    var offerRef = firestoreDB.collection('carpool_offers');
+
+    // get request
+    var request = (await requestRef.doc(reqId).get()).data();
+
+    // get active offers
+    var activeOffers = (await offerRef.where("active", isEqualTo: true).get())
+        .docs
+        .map((doc) => doc.data());
+
+    // get tripInfo for each offer
+
+    // filter based on location
+
+    // filter based on criteria
+
+    print(activeOffers.toList());
+    return null;
+
+    // get all offers
+  }
 }
