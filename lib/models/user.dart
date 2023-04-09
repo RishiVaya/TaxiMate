@@ -4,9 +4,10 @@ class UserRequest {
   String? name;
   String? email;
   String? gender;
+  Int? age;
   Int? rating;
 
-  UserRequest({this.name, this.email, this.gender, this.rating});
+  UserRequest({this.name, this.email, this.gender, this.age, this.rating});
 }
 
 class UserResponse {
