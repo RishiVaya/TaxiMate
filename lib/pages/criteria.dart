@@ -42,8 +42,10 @@ class _CriteriaPageState extends State<CriteriaPage> {
 
       var reqId = await Firestore().createCarpoolRequest(tripDataMap);
 
+      print("HEY ${reqId}");
+
       if (reqId == null) {
-        // show error message
+        // TODO: show error message
         return;
       }
 
@@ -113,7 +115,7 @@ class _CriteriaPageState extends State<CriteriaPage> {
                   ),
                   const SizedBox(height: 64.0),
                   ElevatedButton(
-                    onPressed: () => print("${appData.destinationAddress}"),
+                    onPressed: () => onSubmit(),
                     //
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),

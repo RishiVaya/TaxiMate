@@ -58,7 +58,7 @@ class Firestore {
         return null;
       }
 
-      var ref = firestoreDB.collection('carpool_request');
+      var ref = firestoreDB.collection('carpool_requests');
       var requestMap = {
         "userId": userId,
         "tripId": tripId,
@@ -78,7 +78,7 @@ class Firestore {
   Future<void> updateCarpoolRequestStatus(String id, bool accepted) async {
     var firebaseUser = await Auth().currentUser();
     if (firebaseUser != null) {
-      var ref = firestoreDB.collection('carpool_request').doc(id);
+      var ref = firestoreDB.collection('carpool_requests').doc(id);
       var requestMap = {
         "accepted": accepted,
       };
@@ -136,7 +136,7 @@ class Firestore {
     if (firebaseUser != null) {
       String userId = firebaseUser.uid;
 
-      var ref = firestoreDB.collection('carpool_offer');
+      var ref = firestoreDB.collection('trip_data');
 
       var tripId = await ref
           .add(tripDetails)
