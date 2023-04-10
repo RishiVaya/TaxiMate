@@ -233,4 +233,12 @@ class Firestore {
       "requests": FieldValue.arrayUnion([requestRef.id])
     });
   }
+
+  Future<Map<String, dynamic>?> getOffer(String offerId) async {
+    var offerRef =
+        await firestoreDB.collection('carpool_offers').doc(offerId).get();
+
+    var offer = {"id": offerId, ...?offerRef.data()};
+    return offer;
+  }
 }
