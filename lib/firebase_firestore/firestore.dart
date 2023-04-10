@@ -204,15 +204,23 @@ class Firestore {
           offTripDetails!["pickup"]["longitude"]);
       var offEndPoint = LatLng(offTripDetails["dropoff"]["latitude"],
           offTripDetails!["dropoff"]["longitude"]);
-      List<LatLng> polyline = [offStartPoint, offEndPoint];
+      List<LatLng> polylineOToO = [offStartPoint, offEndPoint];
 
-      var startPointCheck =
-          PolygonUtil.isLocationOnPath(reqStartPoint, polyline, false);
-      var endPointCheck =
-          PolygonUtil.isLocationOnPath(reqEndPoint, polyline, false);
+      List<LatLng> polylineOToR = [offStartPoint, reqEndPoint];
+
+      var startPointCheckOStartToOStart =
+          PolygonUtil.isLocationOnPath(reqStartPoint, polylineOToO, false);
+      var endPointCheckOStartToOEnd =
+          PolygonUtil.isLocationOnPath(reqEndPoint, polylineOToO, false);
+
+      var startPointCheckOStartToREnd =
+          PolygonUtil.isLocationOnPath(reqStartPoint, polylineOToR, false);
+      var endPointCheckOStartToREnd =
+          PolygonUtil.isLocationOnPath(offStartPoint, polylineOToR, false);
 
       // If start and end points are within offeror's route, add to list
-      if (startPointCheck && endPointCheck) {
+      if ((startPointCheckOStartToOStart && endPointCheckOStartToOEnd) ||
+          (startPointCheckOStartToREnd && endPointCheckOStartToREnd)) {
         var offeror = (await userRef.doc(offer["userId"]).get()).data();
         var offerMap = {
           "tripData": {"offerId": offer["id"], ...offTripDetails},
