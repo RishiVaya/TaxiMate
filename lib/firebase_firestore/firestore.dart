@@ -88,17 +88,26 @@ class Firestore {
     }
   }
 
-  Future<void> createOfferRequest(String name, Object tripDetails) async {
+  Future<String?> createCarpoolOffer(Map<String, dynamic> tripDetails) async {
     var firebaseUser = await Auth().currentUser();
     if (firebaseUser != null) {
       String userId = firebaseUser.uid;
-      String tripId = "";
+      String? tripId = await addTripData(tripDetails);
 
-      var ref = firestoreDB.collection('carpool_offer');
-      var requestMap = {userId: userId, tripId: tripId};
+      if (tripId == null) {
+        return null;
+      }
+
+      var ref = firestoreDB.collection('carpool_offers');
+      var requestMap = {
+        "userId": userId,
+        "tripId": tripId,
+        "active": true,
+      };
 
       ref.add(requestMap);
     }
+    return null;
   }
 
   Future<void> updateOfferRequest(
@@ -172,7 +181,7 @@ class Firestore {
     // get active offers
     var activeOffers = (await offerRef.where("active", isEqualTo: true).get())
         .docs
-        .map((doc) => doc.data());
+        .map((doc) => {"id": doc.id, ...doc.data()});
 
     var offersList = [];
 
@@ -192,11 +201,26 @@ class Firestore {
       // If start and end points are within offeror's route, add to list
       if (startPointCheck && endPointCheck) {
         var offeror = (await userRef.doc(offer["userId"]).get()).data();
-        var offerMap = {...offTripDetails, ...?offeror};
+        var offerMap = {
+          "tripData": {"offerId": offer["id"], ...offTripDetails},
+          "userInfo": {...?offeror}
+        };
         offersList.add(offerMap);
       }
     }
 
+    print(offersList);
+
     return offersList;
+  }
+
+  Future<void> selectOffer(String offerId, String reqId) async {
+    var requestRef = firestoreDB.collection('carpool_requests').doc(reqId);
+    var offerRef = firestoreDB.collection('carpool_offers').doc(offerId);
+
+    await requestRef.update({offerId: offerRef.id});
+    await offerRef.update({
+      "requests": FieldValue.arrayUnion([requestRef.id])
+    });
   }
 }
