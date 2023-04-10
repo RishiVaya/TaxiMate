@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:taximate/firebase_firestore/firestore.dart';
 import 'package:taximate/models/app_data.dart';
 import 'package:taximate/components/bottom_navigation.dart';
+import 'package:taximate/pages/offer_info.dart';
+import 'package:taximate/pages/request_info.dart';
 
 class CriteriaPage extends StatefulWidget {
   const CriteriaPage({super.key});
@@ -73,6 +75,7 @@ class _CriteriaPageState extends State<CriteriaPage> {
         return;
       }
 
+      print(reqId);
       // update app data
       appData.updateOfferId(reqId);
 
@@ -172,6 +175,8 @@ class _CriteriaPageState extends State<CriteriaPage> {
                       ),
                     ],
                   ),
+                  const RequestInfo(),
+                  const OfferInfo()
                 ],
               ),
             ],
