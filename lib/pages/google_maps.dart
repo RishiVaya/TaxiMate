@@ -335,8 +335,40 @@ class _MapViewState extends State<MapView> {
       );
     }
 
+    void _showRoute() {
+      (_startAddress != '' && _destinationAddress != '')
+          ? () async {
+              startAddressFocusNode.unfocus();
+              desrinationAddressFocusNode.unfocus();
+              setState(() {
+                if (markers.isNotEmpty) markers.clear();
+                if (polylines.isNotEmpty) polylines.clear();
+                if (polylineCoordinates.isNotEmpty) polylineCoordinates.clear();
+                _placeDistance = null;
+              });
+
+              _calculateDistance().then((isCalculated) {
+                if (isCalculated) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Distance Calculated Sucessfully'),
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error Calculating Distance'),
+                    ),
+                  );
+                }
+              });
+            }
+          : null;
+    }
+
     // change to send trip data to firebase db
     void planTrip() async {
+      _showRoute();
       List<Location> startPlacemark = await locationFromAddress(_startAddress);
       List<Location> destinationPlacemark =
           await locationFromAddress(_destinationAddress);

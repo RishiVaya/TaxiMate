@@ -35,6 +35,7 @@ class _RequestPageState extends State<RequestPage> {
     void _retrieveOffers() async {
       var ans = await Firestore().getRelevantOffersByRequest(appData.requestId);
       offers = ans;
+      print("Offers");
       print(offers);
     }
 
@@ -85,14 +86,15 @@ class _RequestPageState extends State<RequestPage> {
       body: Center(
         child: Column(
           children: <Widget>[
-            SizedBox(
+            const SizedBox(
               height: 25,
             ),
-            ElevatedButton(
-              onPressed: () {
-                _findOffer();
-              },
-              child: Text('FIND OFFERS'),
+            Container(
+              height: 50,
+              child: ElevatedButton(
+                onPressed: _findOffer,
+                child: const Text('FIND OFFERS'),
+              ),
             ),
             if (showOffers)
               Expanded(
@@ -108,9 +110,11 @@ class _RequestPageState extends State<RequestPage> {
                             child: Text(offers[index]['userInfo']['name'][0]),
                           ),
                           title: Text(offers[index]['userInfo']['name']),
-                          subtitle: Text('Item description'),
+                          subtitle: Text(
+                              "Pickup Location - ${offers[index]['tripData']['pickup']['address']}"),
                           onTap: () {
                             print(offers[index]['userInfo']);
+                            print(offers[index]['tripData']['offerId']);
                             _onSelect();
                           },
                         ),
@@ -119,19 +123,19 @@ class _RequestPageState extends State<RequestPage> {
                   ),
                 ),
               ),
-            Expanded(
-                child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(Colors.red),
-                      ),
-                      onPressed: () {
-                        _oncancel();
-                        //context.go('/');
-                      },
-                      child: const Text('CANCEL TRIP'),
-                    ))),
+            Container(
+              height: 50,
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: ElevatedButton(
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all(Colors.red),
+                  ),
+                  onPressed: _oncancel,
+                  child: const Text('CANCEL TRIP'),
+                ),
+              ),
+            ),
           ],
         ),
       ),
