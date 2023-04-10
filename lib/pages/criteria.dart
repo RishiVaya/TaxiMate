@@ -28,8 +28,8 @@ class _CriteriaPageState extends State<CriteriaPage> {
 
     void onSubmit() async {
       // save to db
-      var pickupAddress = appData.startAddress;
-      var destAddress = appData.destinationAddress;
+      var pickupAddress = appData.startAddressObj;
+      var destAddress = appData.destinationAddressObj;
 
       var tripDataMap = {
         "pickup": pickupAddress,
@@ -40,10 +40,9 @@ class _CriteriaPageState extends State<CriteriaPage> {
         }
       };
 
-      var reqId = await Firestore().createCarpoolRequest(tripDataMap);
+      var reqId = await Firestore().createCarpoolOffer(tripDataMap);
 
       if (reqId == null) {
-        // show error message
         return;
       }
 
@@ -113,7 +112,7 @@ class _CriteriaPageState extends State<CriteriaPage> {
                   ),
                   const SizedBox(height: 64.0),
                   ElevatedButton(
-                    onPressed: () => print("${appData.destinationAddress}"),
+                    onPressed: () => onSubmit(),
                     //
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),

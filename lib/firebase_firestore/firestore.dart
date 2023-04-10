@@ -1,6 +1,7 @@
 import 'dart:ffi';
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:maps_toolkit/maps_toolkit.dart';
 import 'package:taximate/auth/auth.dart';
 import 'package:taximate/models/trip_data.dart';
 import 'package:taximate/models/user.dart';
@@ -58,7 +59,7 @@ class Firestore {
         return null;
       }
 
-      var ref = firestoreDB.collection('carpool_request');
+      var ref = firestoreDB.collection('carpool_requests');
       var requestMap = {
         "userId": userId,
         "tripId": tripId,
@@ -78,7 +79,7 @@ class Firestore {
   Future<void> updateCarpoolRequestStatus(String id, bool accepted) async {
     var firebaseUser = await Auth().currentUser();
     if (firebaseUser != null) {
-      var ref = firestoreDB.collection('carpool_request').doc(id);
+      var ref = firestoreDB.collection('carpool_requests').doc(id);
       var requestMap = {
         "accepted": accepted,
       };
@@ -87,17 +88,26 @@ class Firestore {
     }
   }
 
-  Future<void> createOfferRequest(String name, Object tripDetails) async {
+  Future<String?> createCarpoolOffer(Map<String, dynamic> tripDetails) async {
     var firebaseUser = await Auth().currentUser();
     if (firebaseUser != null) {
       String userId = firebaseUser.uid;
-      String tripId = "";
+      String? tripId = await addTripData(tripDetails);
 
-      var ref = firestoreDB.collection('carpool_offer');
-      var requestMap = {userId: userId, tripId: tripId};
+      if (tripId == null) {
+        return null;
+      }
+
+      var ref = firestoreDB.collection('carpool_offers');
+      var requestMap = {
+        "userId": userId,
+        "tripId": tripId,
+        "active": true,
+      };
 
       ref.add(requestMap);
     }
+    return null;
   }
 
   Future<void> updateOfferRequest(
@@ -136,7 +146,7 @@ class Firestore {
     if (firebaseUser != null) {
       String userId = firebaseUser.uid;
 
-      var ref = firestoreDB.collection('carpool_offer');
+      var ref = firestoreDB.collection('trip_data');
 
       var tripId = await ref
           .add(tripDetails)
@@ -145,5 +155,72 @@ class Firestore {
       return tripId;
     }
     return null;
+  }
+
+  Future<List> getRelevantOffersByRequest(String reqId) async {
+    var requestRef = firestoreDB.collection('carpool_requests');
+    var offerRef = firestoreDB.collection('carpool_offers');
+    var tripRef = firestoreDB.collection('trip_data');
+    var userRef = firestoreDB.collection('users');
+
+    // get request
+    var request = {"id": reqId, ...?(await requestRef.doc(reqId).get()).data()};
+
+    var reqTripDetails = (await tripRef.doc(request["tripId"]).get()).data();
+
+    if (reqTripDetails == null) {
+      return [];
+    }
+
+    // Request latitude and longtitude points
+    var reqStartPoint = LatLng(reqTripDetails["pickup"]["latitude"],
+        reqTripDetails["pickup"]["longitude"]);
+    var reqEndPoint = LatLng(reqTripDetails["dropoff"]["latitude"],
+        reqTripDetails["dropoff"]["longitude"]);
+
+    // get active offers
+    var activeOffers = (await offerRef.where("active", isEqualTo: true).get())
+        .docs
+        .map((doc) => {"id": doc.id, ...doc.data()});
+
+    var offersList = [];
+
+    for (var offer in activeOffers) {
+      var offTripDetails = (await tripRef.doc(offer["tripId"]).get()).data();
+      var offStartPoint = LatLng(offTripDetails!["pickup"]["latitude"],
+          offTripDetails!["pickup"]["longitude"]);
+      var offEndPoint = LatLng(offTripDetails["dropoff"]["latitude"],
+          offTripDetails!["dropoff"]["longitude"]);
+      List<LatLng> polyline = [offStartPoint, offEndPoint];
+
+      var startPointCheck =
+          PolygonUtil.isLocationOnPath(reqStartPoint, polyline, false);
+      var endPointCheck =
+          PolygonUtil.isLocationOnPath(reqEndPoint, polyline, false);
+
+      // If start and end points are within offeror's route, add to list
+      if (startPointCheck && endPointCheck) {
+        var offeror = (await userRef.doc(offer["userId"]).get()).data();
+        var offerMap = {
+          "tripData": {"offerId": offer["id"], ...offTripDetails},
+          "userInfo": {...?offeror}
+        };
+        offersList.add(offerMap);
+      }
+    }
+
+    print(offersList);
+
+    return offersList;
+  }
+
+  Future<void> selectOffer(String offerId, String reqId) async {
+    var requestRef = firestoreDB.collection('carpool_requests').doc(reqId);
+    var offerRef = firestoreDB.collection('carpool_offers').doc(offerId);
+
+    await requestRef.update({offerId: offerRef.id});
+    await offerRef.update({
+      "requests": FieldValue.arrayUnion([requestRef.id])
+    });
   }
 }
