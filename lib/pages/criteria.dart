@@ -39,6 +39,7 @@ class _CriteriaPageState extends State<CriteriaPage> {
           "desiredRating": _selectedRating
         }
       };
+      context.go('/offer');
 
       var reqId = await Firestore().createCarpoolOffer(tripDataMap);
 

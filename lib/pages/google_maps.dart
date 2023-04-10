@@ -314,6 +314,27 @@ class _MapViewState extends State<MapView> {
     var width = MediaQuery.of(context).size.width;
     var appData = context.watch<AppDataModel>();
 
+    void _showAlert(BuildContext context) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Alert!!"),
+            content: const Text(
+                "Please enter a start and end location to continue!"),
+            actions: <Widget>[
+              TextButton(
+                child: const Text("OK"),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+
     // change to send trip data to firebase db
     void planTrip() async {
       List<Location> startPlacemark = await locationFromAddress(_startAddress);
@@ -333,7 +354,12 @@ class _MapViewState extends State<MapView> {
     }
 
     int _currentIndex = 0;
-    Map<int, String> pagesMap = {0: '/', 1: '/login', 2: '/profile'};
+    Map<int, String> pagesMap = {
+      0: '/',
+      1: '/login',
+      3: '/profile',
+      2: '/offer'
+    };
 
     void _onTabTapped(int index) {
       setState(() {
@@ -490,6 +516,8 @@ class _MapViewState extends State<MapView> {
                               if (_startAddress != '' &&
                                   _destinationAddress != '') {
                                 planTrip();
+                              } else {
+                                _showAlert(context);
                               }
                             },
                             //
@@ -548,6 +576,10 @@ class _MapViewState extends State<MapView> {
               BottomNavigationBarItem(
                 icon: Icon(Icons.search),
                 label: 'Search',
+              ),
+              BottomNavigationBarItem(
+                icon: Icon(Icons.pages_sharp),
+                label: 'Offers',
               ),
               BottomNavigationBarItem(
                 icon: Icon(Icons.person),
