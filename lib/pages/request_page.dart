@@ -4,9 +4,9 @@ import 'package:provider/provider.dart';
 
 import '../models/app_data.dart';
 
-class OfferPage extends StatefulWidget {
+class RequestPage extends StatefulWidget {
   @override
-  State<OfferPage> createState() => _OfferPageState();
+  State<RequestPage> createState() => _RequestPageState();
 }
 
 // void setTripLocation(String location) {}
@@ -15,7 +15,7 @@ class OfferPage extends StatefulWidget {
 
 // void setSelectedOffer() {}
 
-class _OfferPageState extends State<OfferPage> {
+class _RequestPageState extends State<RequestPage> {
   List<int> offers = [1, 2, 3];
   bool showOffers = false;
   int _currentIndex = 0;
