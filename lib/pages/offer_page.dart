@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:taximate/firebase_firestore/firestore.dart';
 
 import '../models/app_data.dart';
 
@@ -60,7 +61,11 @@ class _OfferPageState extends State<OfferPage> {
   @override
   Widget build(BuildContext context) {
     var appData = context.watch<AppDataModel>();
-    void _oncancel() {}
+
+    void _oncancel() async {
+      await Firestore().updateOfferStatus(appData.offerId, false);
+      context.go('/');
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -94,7 +99,8 @@ class _OfferPageState extends State<OfferPage> {
                     alignment: Alignment.bottomCenter,
                     child: ElevatedButton(
                       onPressed: () {
-                        context.go('/profile');
+                        _oncancel();
+                        //context.go('/');
                       },
                       child: const Text('CANCEL TRIP'),
                     ))),
