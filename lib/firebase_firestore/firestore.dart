@@ -105,7 +105,10 @@ class Firestore {
         "active": true,
       };
 
-      ref.add(requestMap);
+      var offerId = await ref
+          .add(requestMap)
+          .then((documentSnapshot) => documentSnapshot.id);
+      return offerId;
     }
     return null;
   }
