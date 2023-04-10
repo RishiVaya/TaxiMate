@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:taximate/firebase_firestore/database.dart';
 import 'package:taximate/models/app_data.dart';
 import 'package:taximate/pages/criteria.dart';
 import 'package:taximate/pages/offer_page.dart';

@@ -198,6 +198,8 @@ class Firestore {
 
     var offersList = [];
 
+    print(activeOffers);
+
     for (var offer in activeOffers) {
       var offTripDetails = (await tripRef.doc(offer["tripId"]).get()).data();
       var offStartPoint = LatLng(offTripDetails!["pickup"]["latitude"],
