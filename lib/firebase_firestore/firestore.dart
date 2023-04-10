@@ -124,6 +124,16 @@ class Firestore {
     }
   }
 
+  Future<void> updateOfferStatus(String offerId, bool status) async {
+    var firebaseUser = await Auth().currentUser();
+    if (firebaseUser != null) {
+      var ref = firestoreDB.collection('carpool_offers').doc(offerId);
+
+      ref.update({"active": status}).then(
+          (value) => print("Successfully updated"));
+    }
+  }
+
   Future<void> addPassengerRating(Int rating, String passenger) async {
     var firebaseUser = await Auth().currentUser();
 
