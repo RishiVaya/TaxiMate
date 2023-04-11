@@ -174,17 +174,17 @@ class Firestore {
     // get request
     var request = {"id": reqId, ...?(await requestRef.doc(reqId).get()).data()};
 
-    var reqTripDetails = (await tripRef.doc(request["tripId"]).get()).data();
+    var reqTripDetails = request["tripData"];
 
     if (reqTripDetails == null) {
       return [];
     }
 
     // Request latitude and longtitude points
-    var reqStartPoint = LatLng(reqTripDetails["pickup"]["latitude"],
-        reqTripDetails["pickup"]["longitude"]);
-    var reqEndPoint = LatLng(reqTripDetails["dropoff"]["latitude"],
-        reqTripDetails["dropoff"]["longitude"]);
+    var reqStartPoint = LatLng(reqTripDetails["pickup"][0]["latitude"],
+        reqTripDetails["pickup"][0]["longitude"]);
+    var reqEndPoint = LatLng(reqTripDetails["dropoff"][0]["latitude"],
+        reqTripDetails["dropoff"][0]["longitude"]);
 
     // get active offers
     var activeOffers = (await offerRef.where("active", isEqualTo: true).get())
@@ -197,10 +197,10 @@ class Firestore {
 
     for (var offer in activeOffers) {
       var offTripDetails = offer["tripData"];
-      var offStartPoint = LatLng(offTripDetails!["pickup"]["latitude"],
-          offTripDetails!["pickup"]["longitude"]);
-      var offEndPoint = LatLng(offTripDetails["dropoff"]["latitude"],
-          offTripDetails!["dropoff"]["longitude"]);
+      var offStartPoint = LatLng(offTripDetails!["pickup"][0]["latitude"],
+          offTripDetails!["pickup"][0]["longitude"]);
+      var offEndPoint = LatLng(offTripDetails["dropoff"][0]["latitude"],
+          offTripDetails!["dropoff"][0]["longitude"]);
       List<LatLng> polylineOToO = [offStartPoint, offEndPoint];
 
       List<LatLng> polylineOToR = [offStartPoint, reqEndPoint];
@@ -239,6 +239,8 @@ class Firestore {
   Future<void> selectOffer(String offerId, String reqId) async {
     var requestRef = firestoreDB.collection('carpool_requests').doc(reqId);
     var offerRef = firestoreDB.collection('carpool_offers').doc(offerId);
+
+    print("BISCH: ${offerId}");
 
     await requestRef.update({offerId: offerRef.id});
     await offerRef.update({

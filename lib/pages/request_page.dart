@@ -71,6 +71,7 @@ class _RequestPageState extends State<RequestPage> {
     }
 
     void selectOffer(String offerId) async {
+      print(offerId);
       var reqId = appData.requestId;
       await Firestore().selectOffer(offerId, reqId);
       context.go('/mapsr');
