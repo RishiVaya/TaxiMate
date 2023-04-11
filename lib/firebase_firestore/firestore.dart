@@ -210,15 +210,19 @@ class Firestore {
 
       List<LatLng> polylineOToR = [offStartPoint, reqEndPoint];
 
-      var startPointCheckOStartToOStart =
-          PolygonUtil.isLocationOnPath(reqStartPoint, polylineOToO, false);
-      var endPointCheckOStartToOEnd =
-          PolygonUtil.isLocationOnPath(reqEndPoint, polylineOToO, false);
+      var startPointCheckOStartToOStart = PolygonUtil.isLocationOnPath(
+          reqStartPoint, polylineOToO, false,
+          tolerance: 8000);
+      var endPointCheckOStartToOEnd = PolygonUtil.isLocationOnPath(
+          reqEndPoint, polylineOToO, false,
+          tolerance: 8000);
 
-      var startPointCheckOStartToREnd =
-          PolygonUtil.isLocationOnPath(reqStartPoint, polylineOToR, false);
-      var endPointCheckOStartToREnd =
-          PolygonUtil.isLocationOnPath(offStartPoint, polylineOToR, false);
+      var startPointCheckOStartToREnd = PolygonUtil.isLocationOnPath(
+          reqStartPoint, polylineOToR, false,
+          tolerance: 8000);
+      var endPointCheckOStartToREnd = PolygonUtil.isLocationOnPath(
+          offStartPoint, polylineOToR, false,
+          tolerance: 8000);
 
       // If start and end points are within offeror's route, add to list
       if ((startPointCheckOStartToOStart && endPointCheckOStartToOEnd) ||
@@ -253,5 +257,49 @@ class Firestore {
 
     var offer = {"id": offerId, ...?offerRef.data()};
     return offer;
+  }
+
+  Future<Map<String, dynamic>?> getRequest(String requestId) async {
+    var requestRef =
+        await firestoreDB.collection('carpool_requests').doc(requestId).get();
+
+    var request = {"id": requestId, ...?requestRef.data()};
+    return request;
+  }
+
+  Future<List> getRequestsForOffer(String offerId) async {
+    var offerData =
+        (await firestoreDB.collection('carpool_offers').doc(offerId).get())
+            .data();
+    var userRef = firestoreDB.collection('users');
+    var tripRef = firestoreDB.collection('trip_data');
+
+    var requestIds = offerData!["requests"];
+
+    if (requestIds == null) {
+      return [];
+    }
+
+    // Get requests
+    var requestList = [];
+    for (var reqId in requestIds) {
+      var reqRes = await getRequest(reqId);
+      requestList.add(reqRes);
+    }
+
+    // Get users and trip info for each request
+    var combinedRequestList = [];
+    for (var req in requestList) {
+      var reqTripDetails = (await tripRef.doc(req["tripId"]).get()).data();
+      var reqUser = (await tripRef.doc(req["userId"]).get()).data();
+      combinedRequestList.add({
+        "tripData": {"reqId": req["id"], ...?reqTripDetails},
+        "userInfo": {...?reqUser}
+      });
+    }
+
+    print("COMBINED: ${combinedRequestList}");
+
+    return combinedRequestList;
   }
 }

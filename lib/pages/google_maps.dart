@@ -369,6 +369,9 @@ class _MapViewState extends State<MapView> {
     // change to send trip data to firebase db
     void planTrip() async {
       _showRoute();
+      if (_startAddress.isEmpty || _destinationAddress.isEmpty) {
+        return;
+      }
       List<Location> startPlacemark = await locationFromAddress(_startAddress);
       List<Location> destinationPlacemark =
           await locationFromAddress(_destinationAddress);

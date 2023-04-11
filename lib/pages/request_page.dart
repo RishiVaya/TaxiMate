@@ -32,28 +32,28 @@ class _RequestPageState extends State<RequestPage> {
   Widget build(BuildContext context) {
     var appData = context.watch<AppDataModel>();
 
-    void _retrieveOffers() async {
+    Future<List> retrieveOffers() async {
       var ans = await Firestore().getRelevantOffersByRequest(appData.requestId);
-      offers = ans;
-      print("Offers");
-      print(offers);
+      return ans;
     }
 
-    void _findOffer() {
-      _retrieveOffers();
-      if (offers.isEmpty) {
+    void findOffer() async {
+      var offerList = await retrieveOffers();
+      print("${offerList}");
+      if (offerList.isEmpty) {
+        // ignore: use_build_context_synchronously
         showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Sorry'),
-              content: Text(
+              title: const Text('Sorry'),
+              content: const Text(
                 'There are Currently No Offers Available',
                 textAlign: TextAlign.center,
               ),
               actions: <Widget>[
                 TextButton(
-                  child: Text('OK'),
+                  child: const Text('OK'),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
@@ -64,9 +64,15 @@ class _RequestPageState extends State<RequestPage> {
         );
       } else {
         setState(() {
+          offers = offerList;
           showOffers = true;
         });
       }
+    }
+
+    void selectOffer(String offerId) async {
+      var reqId = appData.requestId;
+      await Firestore().selectOffer(offerId, reqId);
     }
 
     void _oncancel() async {
@@ -74,13 +80,9 @@ class _RequestPageState extends State<RequestPage> {
       context.go('/');
     }
 
-    void _onSelect() async {
-      print(appData.requestId);
-    }
-
     return Scaffold(
       appBar: AppBar(
-        title: Text("Offers"),
+        title: const Text("Offers"),
         centerTitle: true,
       ),
       body: Center(
@@ -92,7 +94,7 @@ class _RequestPageState extends State<RequestPage> {
             Container(
               height: 50,
               child: ElevatedButton(
-                onPressed: _findOffer,
+                onPressed: findOffer,
                 child: const Text('FIND OFFERS'),
               ),
             ),
@@ -110,12 +112,29 @@ class _RequestPageState extends State<RequestPage> {
                             child: Text(offers[index]['userInfo']['name'][0]),
                           ),
                           title: Text(offers[index]['userInfo']['name']),
-                          subtitle: Text(
-                              "Pickup Location - ${offers[index]['tripData']['pickup']['address']}"),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(height: 10),
+                              Text(
+                                  "Pickup Location - ${offers[index]['tripData']['pickup']['address']}"),
+                              Text(
+                                  "Dropoff Location - ${offers[index]['tripData']['dropoff']['address']}"),
+                              Text(
+                                  "Rating - ${offers[index]['userInfo']['rating']}"),
+                              Text("Fare - "),
+                              Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    ElevatedButton(
+                                      onPressed: () {},
+                                      child: const Text('Select'),
+                                    ),
+                                  ]),
+                            ],
+                          ),
                           onTap: () {
-                            print(offers[index]['userInfo']);
-                            print(offers[index]['tripData']['offerId']);
-                            _onSelect();
+                            selectOffer(offers[index]['tripData']['offerId']);
                           },
                         ),
                       );
