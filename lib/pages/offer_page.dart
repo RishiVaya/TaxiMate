@@ -28,6 +28,8 @@ class _OfferPageState extends State<OfferPage> {
   }
 
   void _findOffer() {
+    print("finding offers");
+    showRating(context);
     if (offers.isEmpty) {
       showDialog(
         context: context,
@@ -95,6 +97,98 @@ class _OfferPageState extends State<OfferPage> {
                       child: const Text('CANCEL TRIP'),
                     ))),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+Future<void> showRating(BuildContext context) {
+  return showDialog<void>(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Rate Your Carpool'),
+        content: RatingPopUp(),
+        actions: <Widget>[
+          TextButton(
+            style: TextButton.styleFrom(
+              textStyle: Theme.of(context).textTheme.labelLarge,
+            ),
+            child: const Text('Submit'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
+class RatingPopUp extends StatefulWidget {
+  @override
+  State<RatingPopUp> createState() => RatingPopUpState();
+}
+
+class RatingPopUpState extends State<RatingPopUp> {
+  @override
+  Widget build(BuildContext context) {
+
+    var myColorOne = Colors.grey;
+    var myColorTwo = Colors.grey;
+    var myColorThree = Colors.grey;
+    var myColorFour = Colors.grey;
+    var myColorFive = Colors.grey;
+
+    return Center(
+      child: SizedBox(
+        height: 10.0,
+        width: 500.0,
+        child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              IconButton(icon: Icon(Icons.star),
+                onPressed: ()=>setState((){
+                  myColorOne=Colors.orange;
+                  myColorTwo=Colors.grey;
+                  myColorThree=Colors.grey;
+                  myColorFour=Colors.grey;
+                  myColorFive=Colors.grey;
+              }),color: myColorOne,),
+              IconButton(icon: Icon(Icons.star),
+                onPressed: ()=>setState((){
+                  myColorOne=Colors.orange;
+                  myColorTwo=Colors.orange;
+                  myColorThree=Colors.grey;
+                  myColorFour=Colors.grey;
+                  myColorFive=Colors.grey;
+              }),color: myColorTwo,),
+              IconButton(icon: Icon(Icons.star),
+              onPressed: ()=>setState((){
+                myColorOne=Colors.orange;
+                myColorTwo=Colors.orange;
+                myColorThree=Colors.orange;
+                myColorFour=Colors.grey;
+                myColorFive=Colors.grey;
+              }),color: myColorThree,),
+              IconButton(icon: Icon(Icons.star),
+              onPressed: ()=>setState((){
+                myColorOne=Colors.orange;
+                myColorTwo=Colors.orange;
+                myColorThree=Colors.orange;
+                myColorFour=Colors.orange;
+                myColorFive=Colors.grey;
+              }),color: myColorFour,),
+              IconButton(icon: Icon(Icons.star),
+              onPressed: ()=>setState((){
+                myColorOne=Colors.orange;
+                myColorTwo=Colors.orange;
+                myColorThree=Colors.orange;
+                myColorFour=Colors.orange;
+                myColorFive=Colors.orange;
+              }),color: myColorFive,),
+            ],
         ),
       ),
     );
