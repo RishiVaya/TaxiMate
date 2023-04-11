@@ -242,7 +242,7 @@ class Firestore {
 
     print("BISCH: ${offerId}");
 
-    await requestRef.update({offerId: offerRef.id});
+    await requestRef.update({"offerId": offerRef.id});
     await offerRef.update({
       "requests": FieldValue.arrayUnion([requestRef.id])
     });

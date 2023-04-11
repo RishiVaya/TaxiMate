@@ -61,7 +61,9 @@ class _OfferPageState extends State<OfferPage> {
         .doc(appData.offerId)
         .snapshots();
 
-    stream.listen((snapshot) async => {await retrieveRequests()});
+    stream.listen((snapshot) async => {
+          if (mounted) {await retrieveRequests()}
+        });
 
     return Scaffold(
         appBar: AppBar(

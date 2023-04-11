@@ -368,11 +368,15 @@ class _MapViewState extends State<MapView> {
 
     // change to send trip data to firebase db
     void planTrip() async {
-      appData.updateDistance(double.parse(_placeDistance!));
       _showRoute();
-      if (_startAddress.isEmpty || _destinationAddress.isEmpty) {
+      if (_startAddress.isEmpty ||
+          _destinationAddress.isEmpty ||
+          _placeDistance == null) {
         return;
       }
+
+      appData.updateDistance(double.parse(_placeDistance!));
+
       List<Location> startPlacemark = await locationFromAddress(_startAddress);
       List<Location> destinationPlacemark =
           await locationFromAddress(_destinationAddress);

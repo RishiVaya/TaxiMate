@@ -177,8 +177,6 @@ class _CriteriaPageState extends State<CriteriaPage> {
                       ),
                     ],
                   ),
-                  const RequestInfo(),
-                  const OfferInfo()
                 ],
               ),
             ],
