@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:taximate/firebase_firestore/firestore.dart';
 import 'package:taximate/models/app_data.dart';
 import 'package:taximate/components/bottom_navigation.dart';
+import 'package:taximate/pages/offer_info.dart';
+import 'package:taximate/pages/request_info.dart';
 
 class CriteriaPage extends StatefulWidget {
   const CriteriaPage({super.key});
@@ -26,22 +28,21 @@ class _CriteriaPageState extends State<CriteriaPage> {
   Widget build(BuildContext context) {
     var appData = context.watch<AppDataModel>();
 
-    void onSubmit() async {
+    void onRequest() async {
       // save to db
       var pickupAddress = appData.startAddressObj;
       var destAddress = appData.destinationAddressObj;
 
       var tripDataMap = {
-        "pickup": pickupAddress,
-        "dropoff": destAddress,
+        "pickup": [pickupAddress],
+        "dropoff": [destAddress],
         "criteria": {
           "gender": _selectedGender,
           "desiredRating": _selectedRating
         }
       };
-      context.go('/offer');
 
-      var reqId = await Firestore().createCarpoolOffer(tripDataMap);
+      var reqId = await Firestore().createCarpoolRequest(tripDataMap);
 
       if (reqId == null) {
         return;
@@ -51,6 +52,35 @@ class _CriteriaPageState extends State<CriteriaPage> {
       appData.updateRequestId(reqId);
 
       // navigate to offer list page
+      context.go('/request');
+    }
+
+    void onOffer() async {
+      // save to db
+      var pickupAddress = appData.startAddressObj;
+      var destAddress = appData.destinationAddressObj;
+
+      var tripDataMap = {
+        "pickup": [pickupAddress],
+        "dropoff": [destAddress],
+        "criteria": {
+          "gender": _selectedGender,
+          "desiredRating": _selectedRating
+        }
+      };
+
+      var reqId = await Firestore().createCarpoolOffer(tripDataMap);
+
+      if (reqId == null) {
+        return;
+      }
+
+      print(reqId);
+      // update app data
+      appData.updateOfferId(reqId);
+
+      // navigate to offer list page
+      context.go('/offer');
     }
 
     return Scaffold(
@@ -112,20 +142,41 @@ class _CriteriaPageState extends State<CriteriaPage> {
                     }).toList(),
                   ),
                   const SizedBox(height: 64.0),
-                  ElevatedButton(
-                    onPressed: () => onSubmit(),
-                    //
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        'Submit'.toUpperCase(),
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20.0,
+                  Row(
+                    children: [
+                      ElevatedButton(
+                        onPressed: () => onRequest(),
+                        //
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'request carpool'.toUpperCase(),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15.0,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
+                      const SizedBox(width: 10.0),
+                      ElevatedButton(
+                        onPressed: () => onOffer(),
+                        //
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            'Offer carpool'.toUpperCase(),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 15.0,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
+                  const RequestInfo(),
+                  const OfferInfo()
                 ],
               ),
             ],

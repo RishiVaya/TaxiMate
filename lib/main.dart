@@ -1,7 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:taximate/firebase_firestore/database.dart';
 import 'package:taximate/models/app_data.dart';
 import 'package:taximate/pages/criteria.dart';
+import 'package:taximate/pages/google_maps_accepted.dart';
+import 'package:taximate/pages/google_maps_req.dart';
 import 'package:taximate/pages/offer_page.dart';
+import 'package:taximate/pages/request_page.dart';
 import 'package:taximate/providers/app_data.dart';
 import 'pages/login_page.dart';
 import 'pages/sign_up_page.dart';
@@ -46,6 +51,18 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/offer',
       builder: (context, state) => OfferPage(),
+    ),
+    GoRoute(
+      path: '/request',
+      builder: (context, state) => RequestPage(),
+    ),
+    GoRoute(
+      path: '/mapsac',
+      builder: (context, state) => MapViewAc(),
+    ),
+    GoRoute(
+      path: '/mapsr',
+      builder: (context, state) => MapViewR(),
     ),
   ],
 );

@@ -276,7 +276,7 @@ class _MapViewState extends State<MapView> {
       Secrets.API_KEY, // Google Maps API Key
       PointLatLng(startLatitude, startLongitude),
       PointLatLng(destinationLatitude, destinationLongitude),
-      travelMode: TravelMode.transit,
+      travelMode: TravelMode.driving,
     );
 
     if (result.points.isNotEmpty) {
@@ -335,8 +335,43 @@ class _MapViewState extends State<MapView> {
       );
     }
 
+    void _showRoute() {
+      (_startAddress != '' && _destinationAddress != '')
+          ? () async {
+              startAddressFocusNode.unfocus();
+              desrinationAddressFocusNode.unfocus();
+              setState(() {
+                if (markers.isNotEmpty) markers.clear();
+                if (polylines.isNotEmpty) polylines.clear();
+                if (polylineCoordinates.isNotEmpty) polylineCoordinates.clear();
+                _placeDistance = null;
+              });
+
+              _calculateDistance().then((isCalculated) {
+                if (isCalculated) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Distance Calculated Sucessfully'),
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error Calculating Distance'),
+                    ),
+                  );
+                }
+              });
+            }
+          : null;
+    }
+
     // change to send trip data to firebase db
     void planTrip() async {
+      _showRoute();
+      if (_startAddress.isEmpty || _destinationAddress.isEmpty) {
+        return;
+      }
       List<Location> startPlacemark = await locationFromAddress(_startAddress);
       List<Location> destinationPlacemark =
           await locationFromAddress(_destinationAddress);
@@ -356,7 +391,7 @@ class _MapViewState extends State<MapView> {
     int _currentIndex = 0;
     Map<int, String> pagesMap = {
       0: '/',
-      1: '/login',
+      1: '/mapsac',
       3: '/profile',
       2: '/offer'
     };
