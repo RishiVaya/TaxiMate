@@ -51,9 +51,9 @@ class _OfferPageState extends State<OfferPage> {
           return Placeholder();
         });
 
-    void selectOffer(String offerId) async {
-      var reqId = appData.offerId;
-      await Firestore().selectOffer(offerId, reqId);
+    void selectRequest(String requestId) async {
+      var offerId = appData.offerId;
+      await Firestore().selectRequest(offerId, requestId);
     }
 
     void _oncancel() async {
@@ -109,9 +109,9 @@ class _OfferPageState extends State<OfferPage> {
                                   children: [
                                     SizedBox(height: 10),
                                     Text(
-                                        "Pickup Location - ${requests[index]['tripData']['pickup']['address']}"),
+                                        "Pickup Location - ${requests[index]['tripData']['pickup'][0]['address']}"),
                                     Text(
-                                        "Dropoff Location - ${requests[index]['tripData']['dropoff']['address']}"),
+                                        "Dropoff Location - ${requests[index]['tripData']['dropoff'][0]['address']}"),
                                     Text(
                                         "Rating - ${requests[index]['userInfo']['rating']}"),
                                     Text("Fare - "),
@@ -127,8 +127,8 @@ class _OfferPageState extends State<OfferPage> {
                                   ],
                                 ),
                                 onTap: () {
-                                  // selectOffer(
-                                  //     requests[index]['tripData']['reqId']);
+                                  selectRequest(
+                                      requests[index]['tripData']['reqId']);
                                 },
                               ),
                             );

@@ -49,20 +49,20 @@ class Firestore {
     return null;
   }
 
-  Future<String?> createCarpoolRequest(Map<String, dynamic> tripDetails) async {
+  Future<String?> createCarpoolRequest(Map<String, dynamic> tripData) async {
     var firebaseUser = await Auth().currentUser();
     if (firebaseUser != null) {
       String userId = firebaseUser.uid;
-      String? tripId = await addTripData(tripDetails);
+      // String? tripId = await addTripData(tripDetails);
 
-      if (tripId == null) {
-        return null;
-      }
+      // if (tripId == null) {
+      //   return null;
+      // }
 
       var ref = firestoreDB.collection('carpool_requests');
       var requestMap = {
         "userId": userId,
-        "tripId": tripId,
+        "tripData": tripData,
         "accepted": false,
       };
 
@@ -88,20 +88,15 @@ class Firestore {
     }
   }
 
-  Future<String?> createCarpoolOffer(Map<String, dynamic> tripDetails) async {
+  Future<String?> createCarpoolOffer(Map<String, dynamic> tripData) async {
     var firebaseUser = await Auth().currentUser();
     if (firebaseUser != null) {
       String userId = firebaseUser.uid;
-      String? tripId = await addTripData(tripDetails);
-
-      if (tripId == null) {
-        return null;
-      }
 
       var ref = firestoreDB.collection('carpool_offers');
       var requestMap = {
         "userId": userId,
-        "tripId": tripId,
+        "tripData": tripData,
         "active": true,
       };
 
@@ -201,7 +196,7 @@ class Firestore {
     print(activeOffers);
 
     for (var offer in activeOffers) {
-      var offTripDetails = (await tripRef.doc(offer["tripId"]).get()).data();
+      var offTripDetails = offer["tripData"];
       var offStartPoint = LatLng(offTripDetails!["pickup"]["latitude"],
           offTripDetails!["pickup"]["longitude"]);
       var offEndPoint = LatLng(offTripDetails["dropoff"]["latitude"],
@@ -251,6 +246,21 @@ class Firestore {
     });
   }
 
+  Future<void> selectRequest(String offerId, String reqId) async {
+    var requestRef = firestoreDB.collection('carpool_requests').doc(reqId);
+    var offerRef = firestoreDB.collection('carpool_offers').doc(offerId);
+    var tripRef = firestoreDB.collection('trip_data');
+
+    await requestRef.update({offerId: offerRef.id, "accepted": true});
+    await offerRef.update({
+      "selectedRequests": FieldValue.arrayUnion([requestRef.id])
+    });
+
+    //update trip info
+    var offerTripData = tripRef.where("offerId", isEqualTo: offerId);
+    var reqTripData = tripRef.where("reqId", isEqualTo: offerId);
+  }
+
   Future<Map<String, dynamic>?> getOffer(String offerId) async {
     var offerRef =
         await firestoreDB.collection('carpool_offers').doc(offerId).get();
@@ -290,7 +300,7 @@ class Firestore {
     // Get users and trip info for each request
     var combinedRequestList = [];
     for (var req in requestList) {
-      var reqTripDetails = (await tripRef.doc(req["tripId"]).get()).data();
+      var reqTripDetails = req["tripData"];
       var reqUser = (await tripRef.doc(req["userId"]).get()).data();
       combinedRequestList.add({
         "tripData": {"reqId": req["id"], ...?reqTripDetails},

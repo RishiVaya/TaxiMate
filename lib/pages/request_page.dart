@@ -117,9 +117,7 @@ class _RequestPageState extends State<RequestPage> {
                             children: [
                               SizedBox(height: 10),
                               Text(
-                                  "Pickup Location - ${offers[index]['tripData']['pickup']['address']}"),
-                              Text(
-                                  "Dropoff Location - ${offers[index]['tripData']['dropoff']['address']}"),
+                                  "Pickup Location - ${offers[index]['tripData']['pickup'][0]['address']}"),
                               Text(
                                   "Rating - ${offers[index]['userInfo']['rating']}"),
                               Text("Fare - "),
