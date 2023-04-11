@@ -370,6 +370,9 @@ class _MapViewAcState extends State<MapViewAc> {
           _placeDistance = totalDistance.toStringAsFixed(2);
         });
 
+        print("TOTAL DISTANCE -------------------------");
+        print(_placeDistance);
+
         return true;
       } catch (e) {}
       return false;

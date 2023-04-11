@@ -369,7 +369,8 @@ class _MapViewRState extends State<MapViewR> {
         setState(() {
           _placeDistance = totalDistance.toStringAsFixed(2);
         });
-
+        print("TOTAL DISTANCE -------------------------");
+        print(_placeDistance);
         return true;
       } catch (e) {}
       return false;
