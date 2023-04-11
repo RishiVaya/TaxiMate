@@ -84,6 +84,7 @@ class _RequestPageState extends State<RequestPage> {
 
     void _oncancel() async {
       await Firestore().updateCarpoolRequestStatus(appData.requestId, true);
+      appData.updateRequestId('');
       context.go('/');
     }
 

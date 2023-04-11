@@ -84,6 +84,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 border: OutlineInputBorder(),
               ),
             ),
+            const SizedBox(height: 16.0),
             TextFormField(
               controller: emailController,
               decoration: const InputDecoration(

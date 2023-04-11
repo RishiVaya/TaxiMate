@@ -44,6 +44,11 @@ class _ProfilePageState extends State<ProfilePage> {
     1: '/profile',
     2: '/spotify',
   };
+  Map<int, String> pagesMap3 = {
+    0: '/mapsr',
+    1: '/profile',
+    2: '/spotify',
+  };
 
   Future<void> logout() async {
     try {
@@ -60,8 +65,10 @@ class _ProfilePageState extends State<ProfilePage> {
       setState(() {
         _currentIndex = index;
       });
-      if (appData.offerId != '' || appData.requestId != '') {
+      if (appData.offerId != '') {
         context.go('${pagesMap2[index]}');
+      } else if (appData.requestId != '') {
+        context.go('${pagesMap3[index]}');
       } else {
         context.go('${pagesMap[index]}');
       }

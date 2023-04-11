@@ -71,8 +71,6 @@ class _SpotifyPageState extends State<SpotifyPage> {
     } else {
       // Request failed, handle error
     }
-
-    print(playlists[0]);
   }
 
   void _showAlert(BuildContext context, String error) {
