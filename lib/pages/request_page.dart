@@ -70,6 +70,12 @@ class _RequestPageState extends State<RequestPage> {
       }
     }
 
+    Future<double> fare() async {
+      var reqId = appData.requestId;
+      var data = await Firestore().getRequest(reqId);
+      return data!['tripData']['distance'] * 0.7;
+    }
+
     void selectOffer(String offerId) async {
       print(offerId);
       var reqId = appData.requestId;
@@ -122,8 +128,7 @@ class _RequestPageState extends State<RequestPage> {
                                   "Pickup Location - ${offers[index]['tripData']['pickup'][0]['address']}"),
                               Text(
                                   "Rating - ${offers[index]['userInfo']['rating']}"),
-                              Text(
-                                  "Fare - \$${offers[index]['tripData']['distance'] * 0.7} "),
+                              Text("Fare - \$${fare()} "),
                               Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
