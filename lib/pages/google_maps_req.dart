@@ -393,6 +393,10 @@ class _MapViewRState extends State<MapViewR> {
         context.go('/login');
       } on FirebaseAuthException catch (e) {}
     }
+    
+    void goToRatingsPage() {
+      context.go('/ratebuddies');
+    }
 
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
@@ -526,6 +530,13 @@ class _MapViewRState extends State<MapViewR> {
                 ),
               ),
             ),
+            Expanded(
+                child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: ElevatedButton(
+                      onPressed: () {goToRatingsPage();},
+                      child: const Text('END TRIP'),
+                    ))),
             //Expanded(
             //    child: Align(
             //        alignment: Alignment.bottomRight,

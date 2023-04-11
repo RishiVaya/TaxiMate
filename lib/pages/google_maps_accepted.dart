@@ -409,6 +409,10 @@ class _MapViewAcState extends State<MapViewAc> {
       context.go('${pagesMap[index]}');
     }
 
+    void goToRatingsPage() {
+      context.go('/ratebuddies');
+    }
+
     return Container(
       height: height,
       width: width,
@@ -538,6 +542,13 @@ class _MapViewAcState extends State<MapViewAc> {
                 ),
               ),
             ),
+            Expanded(
+                child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: ElevatedButton(
+                      onPressed: () {goToRatingsPage();},
+                      child: const Text('END TRIP'),
+                    ))),
             //Expanded(
             //    child: Align(
             //        alignment: Alignment.bottomRight,
@@ -556,6 +567,7 @@ class _MapViewAcState extends State<MapViewAc> {
             //        ))),
           ],
         ),
+
         bottomNavigationBar: BottomNavigationBar(
             currentIndex: _currentIndex,
             unselectedItemColor: Colors.black,

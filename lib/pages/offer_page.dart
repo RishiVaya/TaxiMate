@@ -39,7 +39,6 @@ class _OfferPageState extends State<OfferPage> {
       var offerId = appData.offerId;
       await Firestore().selectRequest(offerId, requestId);
       context.go('/mapsac');
-      context.go('/ratebuddies');
     }
 
     void _oncancel() async {
@@ -249,6 +248,7 @@ class _RateBuddies extends State<RateBuddies> {
                 final List<int> ratings =
                   buddies.data?.map((buddy) => buddy.rating).toList() ?? [];
                 print('Buddies ratings: $ratings');
+                context.go('/');
               },
               child: const Icon(Icons.check),
             ),
