@@ -179,10 +179,10 @@ class RateBuddies extends StatefulWidget {
   State<RateBuddies> createState() => _RateBuddies();
 }
 class Buddy {
-  final String name;
+  final String name, userId;
   int rating;
 
-  Buddy(this.name, this.rating);
+  Buddy(this.name, this.rating, this.userId);
 }
 
 class _RateBuddies extends State<RateBuddies> {
