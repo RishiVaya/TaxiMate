@@ -397,6 +397,20 @@ class _MapViewRState extends State<MapViewR> {
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
 
+    int _currentIndex = 0;
+
+    Map<int, String> pagesMap = {
+      0: '/mapsr',
+      1: '/profile',
+    };
+
+    void _onTabTapped(int index) {
+      setState(() {
+        _currentIndex = index;
+      });
+      context.go('${pagesMap[index]}');
+    }
+
     return Container(
       height: height,
       width: width,
@@ -544,6 +558,31 @@ class _MapViewRState extends State<MapViewR> {
             //        ))),
           ],
         ),
+        bottomNavigationBar: BottomNavigationBar(
+            currentIndex: _currentIndex,
+            unselectedItemColor: Colors.black,
+            selectedItemColor: Colors.blue,
+            onTap: _onTabTapped,
+            items: <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                icon: Icon(Icons.home),
+                label: 'Home',
+              ),
+              //BottomNavigationBarItem(
+              //  icon: Icon(Icons.search),
+              //  label: 'Search',
+              //),
+
+              BottomNavigationBarItem(
+                icon: Icon(Icons.person),
+                label: 'Profile',
+              ),
+              if (appData.offerId != '')
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.music_note),
+                  label: 'Music',
+                )
+            ]),
       ),
     );
   }

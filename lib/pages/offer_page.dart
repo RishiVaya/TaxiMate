@@ -40,6 +40,7 @@ class _OfferPageState extends State<OfferPage> {
 
     void _oncancel() async {
       // await Firestore().updateCarpoolOfferStatusoffer(appData.offerId, true);
+      appData.updateOfferId('');
       context.go('/');
     }
 
