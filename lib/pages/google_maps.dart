@@ -368,11 +368,15 @@ class _MapViewState extends State<MapView> {
 
     // change to send trip data to firebase db
     void planTrip() async {
-      appData.updateDistance(double.parse(_placeDistance!));
       _showRoute();
-      if (_startAddress.isEmpty || _destinationAddress.isEmpty) {
+      if (_startAddress.isEmpty ||
+          _destinationAddress.isEmpty ||
+          _placeDistance == null) {
         return;
       }
+
+      appData.updateDistance(double.parse(_placeDistance!));
+
       List<Location> startPlacemark = await locationFromAddress(_startAddress);
       List<Location> destinationPlacemark =
           await locationFromAddress(_destinationAddress);
@@ -392,7 +396,9 @@ class _MapViewState extends State<MapView> {
     int _currentIndex = 0;
     Map<int, String> pagesMap = {
       0: '/',
-      1: '/profile',
+      1: '/mapsac',
+      3: '/profile',
+      2: '/offer'
     };
 
     void _onTabTapped(int index) {
@@ -616,7 +622,7 @@ class _MapViewState extends State<MapView> {
             unselectedItemColor: Colors.black,
             selectedItemColor: Colors.blue,
             onTap: _onTabTapped,
-            items: const <BottomNavigationBarItem>[
+            items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: Icon(Icons.home),
                 label: 'Home',
@@ -625,14 +631,16 @@ class _MapViewState extends State<MapView> {
               //  icon: Icon(Icons.search),
               //  label: 'Search',
               //),
-              //BottomNavigationBarItem(
-              //  icon: Icon(Icons.pages_sharp),
-              //  label: 'Offers',
-              //),
+
               BottomNavigationBarItem(
                 icon: Icon(Icons.person),
                 label: 'Profile',
               ),
+              if (appData.offerId != '')
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.pages_sharp),
+                  label: 'Offers',
+                )
             ]),
       ),
     );

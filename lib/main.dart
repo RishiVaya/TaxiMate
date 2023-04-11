@@ -7,6 +7,7 @@ import 'package:taximate/pages/google_maps_accepted.dart';
 import 'package:taximate/pages/google_maps_req.dart';
 import 'package:taximate/pages/offer_page.dart';
 import 'package:taximate/pages/request_page.dart';
+import 'package:taximate/pages/spotify.dart';
 import 'package:taximate/providers/app_data.dart';
 import 'pages/login_page.dart';
 import 'pages/sign_up_page.dart';
@@ -65,8 +66,8 @@ final GoRouter _router = GoRouter(
       builder: (context, state) => MapViewR(),
     ),
     GoRoute(
-      path: '/ratebuddies',
-      builder: (context, state) => RateBuddies(),
+      path: '/spotify',
+      builder: (context, state) => SpotifyPage(),
     ),
   ],
 );

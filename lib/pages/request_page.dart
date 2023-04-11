@@ -31,6 +31,7 @@ class _RequestPageState extends State<RequestPage> {
   @override
   Widget build(BuildContext context) {
     var appData = context.watch<AppDataModel>();
+    var tripFare = 0.0;
 
     Future<List> retrieveOffers() async {
       var ans = await Firestore().getRelevantOffersByRequest(appData.requestId);
@@ -70,10 +71,8 @@ class _RequestPageState extends State<RequestPage> {
       }
     }
 
-    Future<double> fare() async {
-      var reqId = appData.requestId;
-      var data = await Firestore().getRequest(reqId);
-      return data!['tripData']['distance'] * 0.7;
+    double fare() {
+      return appData.distance * 0.7;
     }
 
     void selectOffer(String offerId) async {
