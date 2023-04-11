@@ -17,8 +17,6 @@ class _RequestInfoState extends State<RequestInfo> {
   Widget build(BuildContext context) {
     var appData = context.watch<AppDataModel>();
 
-    print("NIMONIMO ${appData.requestId}");
-
     return appData.requestId != ""
         ? StreamBuilder<DocumentSnapshot>(
             stream: FirebaseFirestore.instance

@@ -34,6 +34,7 @@ class _CriteriaPageState extends State<CriteriaPage> {
       var destAddress = appData.destinationAddressObj;
 
       var tripDataMap = {
+        "distance": appData.distance,
         "pickup": [pickupAddress],
         "dropoff": [destAddress],
         "criteria": {
@@ -61,6 +62,7 @@ class _CriteriaPageState extends State<CriteriaPage> {
       var destAddress = appData.destinationAddressObj;
 
       var tripDataMap = {
+        "distance": appData.distance,
         "pickup": [pickupAddress],
         "dropoff": [destAddress],
         "criteria": {

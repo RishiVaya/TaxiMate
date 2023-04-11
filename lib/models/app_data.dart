@@ -23,6 +23,8 @@ class AppDataModel extends ChangeNotifier {
 
   double longitude = 0.0;
 
+  double distance = 0.0;
+
 // GETTERS
   Map<String, dynamic> get getStartAddress => startAddressObj;
   Map<String, dynamic> get getDestinationAddress => destinationAddressObj;
@@ -61,5 +63,9 @@ class AppDataModel extends ChangeNotifier {
 
   void updateFare(double fare) {
     tripFare = fare;
+  }
+
+  void updateDistance(double dist) {
+    distance = dist;
   }
 }

@@ -368,6 +368,7 @@ class _MapViewState extends State<MapView> {
 
     // change to send trip data to firebase db
     void planTrip() async {
+      appData.updateDistance(double.parse(_placeDistance!));
       _showRoute();
       if (_startAddress.isEmpty || _destinationAddress.isEmpty) {
         return;
@@ -399,6 +400,10 @@ class _MapViewState extends State<MapView> {
         _currentIndex = index;
       });
       context.go('${pagesMap[index]}');
+    }
+
+    double _fare(int? val) {
+      return val! * 0.3;
     }
 
     return Container(
@@ -484,6 +489,16 @@ class _MapViewState extends State<MapView> {
                             visible: _placeDistance == null ? false : true,
                             child: Text(
                               'DISTANCE: $_placeDistance km',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          Visibility(
+                            visible: _placeDistance == null ? false : true,
+                            child: Text(
+                              'Estimated Fare: \$${_placeDistance}',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,

@@ -139,6 +139,7 @@ class _MapViewRState extends State<MapViewR> {
     var appData = context.watch<AppDataModel>();
 
     var id = appData.requestId;
+    print(id);
 
     double _coordinateDistance(lat1, lon1, lat2, lon2) {
       var p = 0.017453292519943295;
@@ -151,6 +152,7 @@ class _MapViewRState extends State<MapViewR> {
 
     Future<List<double>> _pickup() async {
       var offer = await Firestore().getOffer(id);
+      print(offer);
       var info = offer!['tripData'];
       var a = _coordinateDistance(
           info['pickup'][1]['latitude'],
@@ -200,6 +202,7 @@ class _MapViewRState extends State<MapViewR> {
       double destinationLongitude,
       List<double> infos,
     ) async {
+      print(infos);
       polylinePoints = PolylinePoints();
       PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
         Secrets.API_KEY, // Google Maps API Key
@@ -261,7 +264,9 @@ class _MapViewRState extends State<MapViewR> {
     // Method for calculating the distance between two places
     Future<bool> _calculateDistance() async {
       try {
+        print(id);
         var infos = await _pickup();
+        print(infos);
         // Retrieving placemarks from addresses
         List<Location> startPlacemark =
             await locationFromAddress(_startAddress);
@@ -391,14 +396,6 @@ class _MapViewRState extends State<MapViewR> {
 
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
-
-    int _currentIndex = 0;
-    Map<int, String> pagesMap = {
-      0: '/',
-      1: '/mapsac',
-      3: '/profile',
-      2: '/offer'
-    };
 
     return Container(
       height: height,
