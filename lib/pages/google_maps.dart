@@ -391,7 +391,7 @@ class _MapViewState extends State<MapView> {
     int _currentIndex = 0;
     Map<int, String> pagesMap = {
       0: '/',
-      1: '/login',
+      1: '/mapsac',
       3: '/profile',
       2: '/offer'
     };
