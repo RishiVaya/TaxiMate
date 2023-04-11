@@ -122,7 +122,8 @@ class _RequestPageState extends State<RequestPage> {
                                   "Pickup Location - ${offers[index]['tripData']['pickup'][0]['address']}"),
                               Text(
                                   "Rating - ${offers[index]['userInfo']['rating']}"),
-                              Text("Fare - "),
+                              Text(
+                                  "Fare - \$${offers[index]['tripData']['distance'] * 0.7} "),
                               Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [

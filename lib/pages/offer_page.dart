@@ -117,7 +117,8 @@ class _OfferPageState extends State<OfferPage> {
                                     "Dropoff Location - ${requests[index]['tripData']['dropoff'][0]['address']}"),
                                 Text(
                                     "Rating - ${requests[index]['userInfo']['rating']}"),
-                                Text("Fare - "),
+                                Text(
+                                    "Fare - \$${requests[index]['tripData']['distance'] * 0.7} "),
                                 Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
