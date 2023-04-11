@@ -391,9 +391,7 @@ class _MapViewState extends State<MapView> {
     int _currentIndex = 0;
     Map<int, String> pagesMap = {
       0: '/',
-      1: '/mapsac',
-      3: '/profile',
-      2: '/offer'
+      1: '/profile',
     };
 
     void _onTabTapped(int index) {
@@ -608,14 +606,14 @@ class _MapViewState extends State<MapView> {
                 icon: Icon(Icons.home),
                 label: 'Home',
               ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.search),
-                label: 'Search',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.pages_sharp),
-                label: 'Offers',
-              ),
+              //BottomNavigationBarItem(
+              //  icon: Icon(Icons.search),
+              //  label: 'Search',
+              //),
+              //BottomNavigationBarItem(
+              //  icon: Icon(Icons.pages_sharp),
+              //  label: 'Offers',
+              //),
               BottomNavigationBarItem(
                 icon: Icon(Icons.person),
                 label: 'Profile',

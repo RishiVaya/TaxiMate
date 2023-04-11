@@ -35,8 +35,8 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  int _currentIndex = 2;
-  Map<int, String> pagesMap = {0: '/', 1: '/login', 2: '/profile'};
+  int _currentIndex = 1;
+  Map<int, String> pagesMap = {0: '/', 1: '/profile'};
 
   void _onTabTapped(int index) {
     setState(() {
@@ -131,10 +131,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 icon: Icon(Icons.home),
                 label: 'Home',
               ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.search),
-                label: 'Search',
-              ),
+              //BottomNavigationBarItem(
+              //  icon: Icon(Icons.search),
+              //  label: 'Search',
+              //),
               BottomNavigationBarItem(
                 icon: Icon(Icons.person),
                 label: 'Profile',
