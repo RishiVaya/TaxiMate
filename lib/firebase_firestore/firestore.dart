@@ -325,8 +325,6 @@ class Firestore {
       });
     }
 
-    print("COMBINED: ${combinedRequestList}");
-
     return combinedRequestList;
   }
 }

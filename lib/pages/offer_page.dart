@@ -44,16 +44,15 @@ class _OfferPageState extends State<OfferPage> {
     }
 
     Future<void> retrieveRequests() async {
-      if (!submitting) {
-        var ans = await Firestore().getRequestsForOffer(appData.offerId);
-        if (ans.isEmpty || submitting == true) {
-          showOffers = false;
-        } else {
-          setState(() {
-            requests = ans;
-            showOffers = true;
-          });
-        }
+      if (!mounted) return;
+      var ans = await Firestore().getRequestsForOffer(appData.offerId);
+      if (ans.isEmpty || submitting == true) {
+        showOffers = false;
+      } else {
+        setState(() {
+          requests = ans;
+          showOffers = true;
+        });
       }
     }
 
