@@ -170,7 +170,7 @@ Future<List<Buddy>> makeBuddyList(BuildContext context) async {
   List requests = await Firestore().getRequestsForOffer(appData.offerId);
   List<Buddy> buddies = [];
   for (var request in requests) {
-    buddies.add(request["userInfo"]["name"]);
+    buddies.add(Buddy(request["userInfo"]["name"],0,request["userInfo"]["userId"]));
   }
   return buddies;
 }
