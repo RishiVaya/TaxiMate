@@ -49,6 +49,17 @@ class Firestore {
     return null;
   }
 
+  Future<Map<String, dynamic>?> getUser(String userId) async {
+    try {
+      var userRef = firestoreDB.collection('users');
+      var user = await userRef.doc(userId).get();
+      return user.data();
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
   Future<String?> createCarpoolRequest(Map<String, dynamic> tripData) async {
     var firebaseUser = await Auth().currentUser();
     if (firebaseUser != null) {
