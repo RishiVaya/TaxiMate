@@ -249,16 +249,31 @@ class Firestore {
   Future<void> selectRequest(String offerId, String reqId) async {
     var requestRef = firestoreDB.collection('carpool_requests').doc(reqId);
     var offerRef = firestoreDB.collection('carpool_offers').doc(offerId);
-    var tripRef = firestoreDB.collection('trip_data');
 
-    await requestRef.update({offerId: offerRef.id, "accepted": true});
-    await offerRef.update({
-      "selectedRequests": FieldValue.arrayUnion([requestRef.id])
-    });
+    // Get request and offer data
+    var offerData = (await offerRef.get()).data();
+    var requestData = (await requestRef.get()).data();
+
+    var offerDropoffs = offerData!["tripData"]["dropoff"];
+    var requestDropoffs = requestData!["tripData"]["dropoff"];
+
+    var combinedDropOffs = new List.from(offerDropoffs)
+      ..addAll(requestDropoffs);
+
+    var offerPickups = offerData!["tripData"]["pickup"];
+    var requestPickups = requestData!["tripData"]["pickup"];
+
+    var combinedPickups = new List.from(offerPickups)..addAll(requestPickups);
 
     //update trip info
-    var offerTripData = tripRef.where("offerId", isEqualTo: offerId);
-    var reqTripData = tripRef.where("reqId", isEqualTo: offerId);
+    var offerTripData = await offerRef.update({
+      "tripData.dropoff": combinedDropOffs,
+      "tripData.pickup": combinedPickups,
+    });
+    var reqTripData = await requestRef.update({
+      "tripData.dropoff": combinedDropOffs,
+      "tripData.pickup": combinedPickups,
+    });
   }
 
   Future<Map<String, dynamic>?> getOffer(String offerId) async {
