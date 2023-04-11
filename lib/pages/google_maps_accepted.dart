@@ -37,8 +37,8 @@ class _MapViewAcState extends State<MapViewAc> {
   final startAddressFocusNode = FocusNode();
   final desrinationAddressFocusNode = FocusNode();
 
-  String _startAddress = '';
-  String _destinationAddress = '';
+  String _startAddress = 'mcmaster';
+  String _destinationAddress = 'richmond hill';
   String? _placeDistance;
 
   Set<Marker> markers = {};
@@ -134,203 +134,262 @@ class _MapViewAcState extends State<MapViewAc> {
     } catch (e) {}
   }
 
-  // Method for calculating the distance between two places
-  Future<bool> _calculateDistance() async {
-    try {
-      // Retrieving placemarks from addresses
-      List<Location> startPlacemark = await locationFromAddress(_startAddress);
-      List<Location> destinationPlacemark =
-          await locationFromAddress(_destinationAddress);
-
-      // Use the retrieved coordinates of the current position,
-      // instead of the address if the start position is user's
-      // current position, as it results in better accuracy.
-      double startLatitude = _startAddress == _currentAddress
-          ? _currentPosition.latitude
-          : startPlacemark[0].latitude;
-
-      double startLongitude = _startAddress == _currentAddress
-          ? _currentPosition.longitude
-          : startPlacemark[0].longitude;
-
-      double destinationLatitude = destinationPlacemark[0].latitude;
-      double destinationLongitude = destinationPlacemark[0].longitude;
-
-      String startCoordinatesString = '($startLatitude, $startLongitude)';
-      String destinationCoordinatesString =
-          '($destinationLatitude, $destinationLongitude)';
-
-      // Start Location Marker
-      Marker startMarker = Marker(
-        markerId: MarkerId(startCoordinatesString),
-        position: LatLng(startLatitude, startLongitude),
-        infoWindow: InfoWindow(
-          title: 'Start $startCoordinatesString',
-          snippet: _startAddress,
-        ),
-        icon: BitmapDescriptor.defaultMarker,
-      );
-
-      // Destination Location Marker
-      Marker destinationMarker = Marker(
-        markerId: MarkerId(destinationCoordinatesString),
-        position: LatLng(destinationLatitude, destinationLongitude),
-        infoWindow: InfoWindow(
-          title: 'Destination $destinationCoordinatesString',
-          snippet: _destinationAddress,
-        ),
-        icon: BitmapDescriptor.defaultMarker,
-      );
-
-      // Adding the markers to the list
-      markers.add(startMarker);
-      markers.add(destinationMarker);
-
-      // Calculating to check that the position relative
-      // to the frame, and pan & zoom the camera accordingly.
-      double miny = (startLatitude <= destinationLatitude)
-          ? startLatitude
-          : destinationLatitude;
-      double minx = (startLongitude <= destinationLongitude)
-          ? startLongitude
-          : destinationLongitude;
-      double maxy = (startLatitude <= destinationLatitude)
-          ? destinationLatitude
-          : startLatitude;
-      double maxx = (startLongitude <= destinationLongitude)
-          ? destinationLongitude
-          : startLongitude;
-
-      double southWestLatitude = miny;
-      double southWestLongitude = minx;
-
-      double northEastLatitude = maxy;
-      double northEastLongitude = maxx;
-
-      // Accommodate the two locations within the
-      // camera view of the map
-      mapController.animateCamera(
-        CameraUpdate.newLatLngBounds(
-          LatLngBounds(
-            northeast: LatLng(northEastLatitude, northEastLongitude),
-            southwest: LatLng(southWestLatitude, southWestLongitude),
-          ),
-          100.0,
-        ),
-      );
-
-      // Calculating the distance between the start and the end positions
-      // with a straight path, without considering any route
-      // double distanceInMeters = await Geolocator.bearingBetween(
-      //   startLatitude,
-      //   startLongitude,
-      //   destinationLatitude,
-      //   destinationLongitude,
-      // );
-
-      await _createPolylines(startLatitude, startLongitude, destinationLatitude,
-          destinationLongitude);
-
-      double totalDistance = 0.0;
-
-      // Calculating the total distance by adding the distance
-      // between small segments
-      for (int i = 0; i < polylineCoordinates.length - 1; i++) {
-        totalDistance += _coordinateDistance(
-          polylineCoordinates[i].latitude,
-          polylineCoordinates[i].longitude,
-          polylineCoordinates[i + 1].latitude,
-          polylineCoordinates[i + 1].longitude,
-        );
-      }
-
-      setState(() {
-        _placeDistance = totalDistance.toStringAsFixed(2);
-      });
-
-      return true;
-    } catch (e) {}
-    return false;
-  }
-
-  // Formula for calculating distance between two coordinates
-  // https://stackoverflow.com/a/54138876/11910277
-  double _coordinateDistance(lat1, lon1, lat2, lon2) {
-    var p = 0.017453292519943295;
-    var c = cos;
-    var a = 0.5 -
-        c((lat2 - lat1) * p) / 2 +
-        c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
-    return 12742 * asin(sqrt(a));
-  }
-
-  // Create the polylines for showing the route between two places
-  _createPolylines(
-    double startLatitude,
-    double startLongitude,
-    double destinationLatitude,
-    double destinationLongitude,
-  ) async {
-    polylinePoints = PolylinePoints();
-    PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      Secrets.API_KEY, // Google Maps API Key
-      PointLatLng(startLatitude, startLongitude),
-      PointLatLng(43.8563707, -79.3376825),
-      //wayPoints: [PolylineWayPoint(location: "43.8563707,-79.3376825")],
-      travelMode: TravelMode.transit,
-    );
-    print(result);
-
-    if (result.points.isNotEmpty) {
-      result.points.forEach((PointLatLng point) {
-        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-      });
-    }
-
-    polylinePoints = PolylinePoints();
-    PolylineResult result2 = await polylinePoints.getRouteBetweenCoordinates(
-      Secrets.API_KEY, // Google Maps API Key
-      PointLatLng(43.8563707, -79.3376825),
-      PointLatLng(destinationLatitude, destinationLongitude),
-      //wayPoints: [PolylineWayPoint(location: "43.8563707,-79.3376825")],
-      travelMode: TravelMode.transit,
-    );
-    print(result2);
-
-    if (result2.points.isNotEmpty) {
-      result2.points.forEach((PointLatLng point) {
-        polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-      });
-    }
-
-    PolylineId id = PolylineId('poly');
-    Polyline polyline = Polyline(
-      polylineId: id,
-      color: Colors.red,
-      points: polylineCoordinates,
-      width: 3,
-    );
-    polylines[id] = polyline;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _getCurrentLocation();
-  }
-
-  Future<void> logout() async {
-    try {
-      await Auth().signOut();
-      context.go('/login');
-    } on FirebaseAuthException catch (e) {}
-  }
-
   @override
   Widget build(BuildContext context) {
+    var appData = context.watch<AppDataModel>();
+
+    var id = appData.offerId;
+
+    double _coordinateDistance(lat1, lon1, lat2, lon2) {
+      var p = 0.017453292519943295;
+      var c = cos;
+      var a = 0.5 -
+          c((lat2 - lat1) * p) / 2 +
+          c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
+      return 12742 * asin(sqrt(a));
+    }
+
+    Future<List<double>> _pickup() async {
+      var offer = await Firestore().getOffer(id);
+      var info = offer!['tripData'];
+      var a = _coordinateDistance(
+          info['pickup'][1]['latitude'],
+          info['pickup'][1]['longitude'],
+          info['dropoff'][0]['latitude'],
+          info['dropoff'][0]['longitude']);
+      var b = _coordinateDistance(
+          info['pickup'][1]['latitude'],
+          info['pickup'][1]['longitude'],
+          info['dropoff'][1]['latitude'],
+          info['dropoff'][1]['longitude']);
+
+      if (a > b) {
+        return [
+          info['pickup'][0]['latitude'],
+          info['pickup'][0]['longitude'],
+          info['pickup'][1]['latitude'],
+          info['pickup'][1]['longitude'],
+          info['dropoff'][1]['latitude'],
+          info['dropoff'][1]['longitude'],
+          info['dropoff'][0]['latitude'],
+          info['dropoff'][0]['longitude']
+        ];
+      }
+      return [
+        info['pickup'][0]['latitude'],
+        info['pickup'][0]['longitude'],
+        info['pickup'][1]['latitude'],
+        info['pickup'][1]['longitude'],
+        info['dropoff'][0]['latitude'],
+        info['dropoff'][0]['longitude'],
+        info['dropoff'][1]['latitude'],
+        info['dropoff'][1]['longitude']
+      ];
+    }
+
+    //var pickup = await Firestore().getOffer(id)['tripData'][];
+
+    // Formula for calculating distance between two coordinates
+    // https://stackoverflow.com/a/54138876/11910277
+
+    // Create the polylines for showing the route between two places
+    _createPolylines(
+      double startLatitude,
+      double startLongitude,
+      double destinationLatitude,
+      double destinationLongitude,
+      List<double> infos,
+    ) async {
+      polylinePoints = PolylinePoints();
+      PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
+        Secrets.API_KEY, // Google Maps API Key
+        PointLatLng(startLatitude, startLongitude),
+        PointLatLng(infos[2], infos[3]),
+        //wayPoints: [PolylineWayPoint(location: "43.8563707,-79.3376825")],
+        travelMode: TravelMode.transit,
+      );
+      print(result);
+
+      if (result.points.isNotEmpty) {
+        result.points.forEach((PointLatLng point) {
+          polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+        });
+      }
+
+      polylinePoints = PolylinePoints();
+      PolylineResult result2 = await polylinePoints.getRouteBetweenCoordinates(
+        Secrets.API_KEY, // Google Maps API Key
+        PointLatLng(infos[2], infos[3]),
+        PointLatLng(infos[4], infos[5]),
+        //wayPoints: [PolylineWayPoint(location: "43.8563707,-79.3376825")],
+        travelMode: TravelMode.transit,
+      );
+      print(result2);
+
+      if (result2.points.isNotEmpty) {
+        result2.points.forEach((PointLatLng point) {
+          polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+        });
+      }
+
+      polylinePoints = PolylinePoints();
+      PolylineResult result3 = await polylinePoints.getRouteBetweenCoordinates(
+        Secrets.API_KEY, // Google Maps API Key
+        PointLatLng(infos[4], infos[5]),
+        PointLatLng(destinationLatitude, destinationLongitude),
+        //wayPoints: [PolylineWayPoint(location: "43.8563707,-79.3376825")],
+        travelMode: TravelMode.transit,
+      );
+      print(result3);
+
+      if (result3.points.isNotEmpty) {
+        result3.points.forEach((PointLatLng point) {
+          polylineCoordinates.add(LatLng(point.latitude, point.longitude));
+        });
+      }
+
+      PolylineId id = PolylineId('poly');
+      Polyline polyline = Polyline(
+        polylineId: id,
+        color: Colors.red,
+        points: polylineCoordinates,
+        width: 3,
+      );
+      polylines[id] = polyline;
+    }
+
+    // Method for calculating the distance between two places
+    Future<bool> _calculateDistance() async {
+      try {
+        var infos = await _pickup();
+        // Retrieving placemarks from addresses
+        List<Location> startPlacemark =
+            await locationFromAddress(_startAddress);
+        List<Location> destinationPlacemark =
+            await locationFromAddress(_destinationAddress);
+
+        // Use the retrieved coordinates of the current position,
+        // instead of the address if the start position is user's
+        // current position, as it results in better accuracy.
+        double startLatitude = infos[0];
+
+        double startLongitude = infos[1];
+
+        double destinationLatitude = infos[6];
+        double destinationLongitude = infos[7];
+
+        String startCoordinatesString = '($startLatitude, $startLongitude)';
+        String destinationCoordinatesString =
+            '($destinationLatitude, $destinationLongitude)';
+
+        // Start Location Marker
+        Marker startMarker = Marker(
+          markerId: MarkerId(startCoordinatesString),
+          position: LatLng(infos[0], infos[1]),
+          infoWindow: InfoWindow(
+            title: 'Start $startCoordinatesString',
+            snippet: _startAddress,
+          ),
+          icon: BitmapDescriptor.defaultMarker,
+        );
+
+        // Destination Location Marker
+        Marker destinationMarker = Marker(
+          markerId: MarkerId(destinationCoordinatesString),
+          position: LatLng(infos[6], infos[7]),
+          infoWindow: InfoWindow(
+            title: 'Destination $destinationCoordinatesString',
+            snippet: _destinationAddress,
+          ),
+          icon: BitmapDescriptor.defaultMarker,
+        );
+
+        // Adding the markers to the list
+        markers.add(startMarker);
+        markers.add(destinationMarker);
+
+        // Calculating to check that the position relative
+        // to the frame, and pan & zoom the camera accordingly.
+        double miny = (startLatitude <= destinationLatitude)
+            ? startLatitude
+            : destinationLatitude;
+        double minx = (startLongitude <= destinationLongitude)
+            ? startLongitude
+            : destinationLongitude;
+        double maxy = (startLatitude <= destinationLatitude)
+            ? destinationLatitude
+            : startLatitude;
+        double maxx = (startLongitude <= destinationLongitude)
+            ? destinationLongitude
+            : startLongitude;
+
+        double southWestLatitude = miny;
+        double southWestLongitude = minx;
+
+        double northEastLatitude = maxy;
+        double northEastLongitude = maxx;
+
+        // Accommodate the two locations within the
+        // camera view of the map
+        mapController.animateCamera(
+          CameraUpdate.newLatLngBounds(
+            LatLngBounds(
+              northeast: LatLng(northEastLatitude, northEastLongitude),
+              southwest: LatLng(southWestLatitude, southWestLongitude),
+            ),
+            100.0,
+          ),
+        );
+
+        // Calculating the distance between the start and the end positions
+        // with a straight path, without considering any route
+        // double distanceInMeters = await Geolocator.bearingBetween(
+        //   startLatitude,
+        //   startLongitude,
+        //   destinationLatitude,
+        //   destinationLongitude,
+        // );
+
+        await _createPolylines(startLatitude, startLongitude,
+            destinationLatitude, destinationLongitude, infos);
+
+        double totalDistance = 0.0;
+
+        // Calculating the total distance by adding the distance
+        // between small segments
+        for (int i = 0; i < polylineCoordinates.length - 1; i++) {
+          totalDistance += _coordinateDistance(
+            polylineCoordinates[i].latitude,
+            polylineCoordinates[i].longitude,
+            polylineCoordinates[i + 1].latitude,
+            polylineCoordinates[i + 1].longitude,
+          );
+        }
+
+        setState(() {
+          _placeDistance = totalDistance.toStringAsFixed(2);
+        });
+
+        return true;
+      } catch (e) {}
+      return false;
+    }
+
+    @override
+    void initState() {
+      super.initState();
+      _getCurrentLocation();
+    }
+
+    Future<void> logout() async {
+      try {
+        await Auth().signOut();
+        context.go('/login');
+      } on FirebaseAuthException catch (e) {}
+    }
+
     var height = MediaQuery.of(context).size.height;
     var width = MediaQuery.of(context).size.width;
-    var appData = context.watch<AppDataModel>();
 
     int _currentIndex = 0;
     Map<int, String> pagesMap = {
