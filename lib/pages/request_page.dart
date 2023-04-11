@@ -73,6 +73,7 @@ class _RequestPageState extends State<RequestPage> {
     void selectOffer(String offerId) async {
       var reqId = appData.requestId;
       await Firestore().selectOffer(offerId, reqId);
+      context.go('/mapsr');
     }
 
     void _oncancel() async {
@@ -125,15 +126,16 @@ class _RequestPageState extends State<RequestPage> {
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     ElevatedButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        selectOffer(offers[index]['tripData']
+                                            ['offerId']);
+                                      },
                                       child: const Text('Select'),
                                     ),
                                   ]),
                             ],
                           ),
-                          onTap: () {
-                            selectOffer(offers[index]['tripData']['offerId']);
-                          },
+                          onTap: () {},
                         ),
                       );
                     },

@@ -131,8 +131,8 @@ class _OfferPageState extends State<OfferPage> {
                                   ],
                                 ),
                                 onTap: () {
-                                  selectRequest(
-                                      requests[index]['tripData']['reqId']);
+                                  //selectRequest(
+                                  //    requests[index]['tripData']['reqId']);
                                 },
                               ),
                             );

@@ -4,6 +4,7 @@ import 'package:taximate/firebase_firestore/database.dart';
 import 'package:taximate/models/app_data.dart';
 import 'package:taximate/pages/criteria.dart';
 import 'package:taximate/pages/google_maps_accepted.dart';
+import 'package:taximate/pages/google_maps_req.dart';
 import 'package:taximate/pages/offer_page.dart';
 import 'package:taximate/pages/request_page.dart';
 import 'package:taximate/providers/app_data.dart';
@@ -58,6 +59,10 @@ final GoRouter _router = GoRouter(
     GoRoute(
       path: '/mapsac',
       builder: (context, state) => MapViewAc(),
+    ),
+    GoRoute(
+      path: '/mapsr',
+      builder: (context, state) => MapViewR(),
     ),
   ],
 );
