@@ -54,6 +54,7 @@ class _OfferPageState extends State<OfferPage> {
     void selectRequest(String requestId) async {
       var offerId = appData.offerId;
       await Firestore().selectRequest(offerId, requestId);
+      context.go('/mapsac');
     }
 
     void _oncancel() async {
@@ -120,8 +121,11 @@ class _OfferPageState extends State<OfferPage> {
                                             MainAxisAlignment.end,
                                         children: [
                                           ElevatedButton(
-                                            onPressed: () {},
-                                            child: const Text('Select'),
+                                            onPressed: () {
+                                              selectRequest(requests[index]
+                                                  ['tripData']['reqId']);
+                                            },
+                                            child: const Text('Accept'),
                                           ),
                                         ]),
                                   ],

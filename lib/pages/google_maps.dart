@@ -276,7 +276,7 @@ class _MapViewState extends State<MapView> {
       Secrets.API_KEY, // Google Maps API Key
       PointLatLng(startLatitude, startLongitude),
       PointLatLng(destinationLatitude, destinationLongitude),
-      travelMode: TravelMode.transit,
+      travelMode: TravelMode.driving,
     );
 
     if (result.points.isNotEmpty) {

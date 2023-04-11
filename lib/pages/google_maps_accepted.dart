@@ -206,7 +206,7 @@ class _MapViewAcState extends State<MapViewAc> {
         PointLatLng(startLatitude, startLongitude),
         PointLatLng(infos[2], infos[3]),
         //wayPoints: [PolylineWayPoint(location: "43.8563707,-79.3376825")],
-        travelMode: TravelMode.transit,
+        travelMode: TravelMode.driving,
       );
       print(result);
 
@@ -222,7 +222,7 @@ class _MapViewAcState extends State<MapViewAc> {
         PointLatLng(infos[2], infos[3]),
         PointLatLng(infos[4], infos[5]),
         //wayPoints: [PolylineWayPoint(location: "43.8563707,-79.3376825")],
-        travelMode: TravelMode.transit,
+        travelMode: TravelMode.driving,
       );
       print(result2);
 
@@ -238,7 +238,7 @@ class _MapViewAcState extends State<MapViewAc> {
         PointLatLng(infos[4], infos[5]),
         PointLatLng(destinationLatitude, destinationLongitude),
         //wayPoints: [PolylineWayPoint(location: "43.8563707,-79.3376825")],
-        travelMode: TravelMode.transit,
+        travelMode: TravelMode.driving,
       );
       print(result3);
 
