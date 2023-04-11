@@ -321,7 +321,7 @@ class Firestore {
       var reqUser = (await tripRef.doc(req["userId"]).get()).data();
       combinedRequestList.add({
         "tripData": {"reqId": req["id"], ...?reqTripDetails},
-        "userInfo": {...?reqUser}
+        "userInfo": {"userId": req["userId"], ...?reqUser}
       });
     }
 
