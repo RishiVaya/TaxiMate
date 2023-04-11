@@ -1,7 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:taximate/firebase_firestore/firestore.dart';
+import 'package:taximate/models/app_data.dart';
 import 'package:taximate/models/user.dart';
 
 import '../auth/auth.dart';
@@ -37,13 +39,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
   int _currentIndex = 1;
   Map<int, String> pagesMap = {0: '/', 1: '/profile'};
-
-  void _onTabTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-    context.go('${pagesMap[index]}');
-  }
+  Map<int, String> pagesMap2 = {
+    0: '/mapsac',
+    1: '/profile',
+    2: '/spotify',
+  };
 
   Future<void> logout() async {
     try {
@@ -54,6 +54,19 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    var appData = context.watch<AppDataModel>();
+
+    void _onTabTapped(int index) {
+      setState(() {
+        _currentIndex = index;
+      });
+      if (appData.offerId != '' || appData.requestId != '') {
+        context.go('${pagesMap2[index]}');
+      } else {
+        context.go('${pagesMap[index]}');
+      }
+    }
+
     return Scaffold(
         appBar: AppBar(
           title: const Text('Profile Page'),
@@ -126,7 +139,7 @@ class _ProfilePageState extends State<ProfilePage> {
             unselectedItemColor: Colors.black,
             selectedItemColor: Colors.blue,
             onTap: _onTabTapped,
-            items: const <BottomNavigationBarItem>[
+            items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
                 icon: Icon(Icons.home),
                 label: 'Home',
@@ -139,6 +152,11 @@ class _ProfilePageState extends State<ProfilePage> {
                 icon: Icon(Icons.person),
                 label: 'Profile',
               ),
+              if (appData.offerId != '')
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.music_note),
+                  label: 'Music',
+                )
             ]));
   }
 }
