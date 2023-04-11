@@ -64,6 +64,10 @@ final GoRouter _router = GoRouter(
       path: '/mapsr',
       builder: (context, state) => MapViewR(),
     ),
+    GoRoute(
+      path: '/ratebuddies',
+      builder: (context, state) => RateBuddies(),
+    ),
   ],
 );
 

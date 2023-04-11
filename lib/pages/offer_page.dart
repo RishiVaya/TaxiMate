@@ -55,6 +55,7 @@ class _OfferPageState extends State<OfferPage> {
       var offerId = appData.offerId;
       await Firestore().selectRequest(offerId, requestId);
       context.go('/mapsac');
+      context.go('/ratebuddies');
     }
 
     void _oncancel() async {
@@ -124,7 +125,6 @@ class _OfferPageState extends State<OfferPage> {
                                             onPressed: () {
                                               selectRequest(requests[index]
                                                   ['tripData']['reqId']);
-                                              showRating(context);
                                             },
                                             child: const Text('Accept'),
                                           ),
@@ -164,93 +164,77 @@ class _OfferPageState extends State<OfferPage> {
   }
 }
 
-Future<void> showRating(BuildContext context) {
-  return showDialog<void>(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Rate Your Carpool'),
-        content: RatingPopUp(),
-        actions: <Widget>[
-          TextButton(
-            style: TextButton.styleFrom(
-              textStyle: Theme.of(context).textTheme.labelLarge,
-            ),
-            child: const Text('Submit'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      );
-    },
-  );
+Future<List<Buddy>> makeBuddyList(BuildContext context) async {
+  var appData = context.watch<AppDataModel>();
+  List requests = await Firestore().getRequestsForOffer(appData.offerId);
+  List<Buddy> buddies = [];
+  for (var request in requests) {
+    buddies.add(request["userInfo"]["name"]);
+  }
+  return buddies;
 }
 
-class RatingPopUp extends StatefulWidget {
+class RateBuddies extends StatefulWidget {
   @override
-  State<RatingPopUp> createState() => RatingPopUpState();
+  State<RateBuddies> createState() => _RateBuddies();
+}
+class Buddy {
+  final String name;
+  int rating;
+
+  Buddy(this.name, this.rating);
 }
 
-class RatingPopUpState extends State<RatingPopUp> {
+class _RateBuddies extends State<RateBuddies> {
+  List<Buddy> _buddies = [
+    Buddy('John', 0),
+    Buddy('Mary', 0),
+    Buddy('Tom', 0),
+    Buddy('Sarah', 0),
+  ];
+  final List<int> _stars = [1, 2, 3, 4, 5];
+
   @override
   Widget build(BuildContext context) {
-
-    var myColorOne = Colors.grey;
-    var myColorTwo = Colors.grey;
-    var myColorThree = Colors.grey;
-    var myColorFour = Colors.grey;
-    var myColorFive = Colors.grey;
-
-    return Center(
-      child: SizedBox(
-        height: 10.0,
-        width: 500.0,
-        child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              IconButton(icon: Icon(Icons.star),
-                onPressed: ()=>setState((){
-                  myColorOne=Colors.orange;
-                  myColorTwo=Colors.grey;
-                  myColorThree=Colors.grey;
-                  myColorFour=Colors.grey;
-                  myColorFive=Colors.grey;
-              }),color: myColorOne,),
-              IconButton(icon: Icon(Icons.star),
-                onPressed: ()=>setState((){
-                  myColorOne=Colors.orange;
-                  myColorTwo=Colors.orange;
-                  myColorThree=Colors.grey;
-                  myColorFour=Colors.grey;
-                  myColorFive=Colors.grey;
-              }),color: myColorTwo,),
-              IconButton(icon: Icon(Icons.star),
-              onPressed: ()=>setState((){
-                myColorOne=Colors.orange;
-                myColorTwo=Colors.orange;
-                myColorThree=Colors.orange;
-                myColorFour=Colors.grey;
-                myColorFive=Colors.grey;
-              }),color: myColorThree,),
-              IconButton(icon: Icon(Icons.star),
-              onPressed: ()=>setState((){
-                myColorOne=Colors.orange;
-                myColorTwo=Colors.orange;
-                myColorThree=Colors.orange;
-                myColorFour=Colors.orange;
-                myColorFive=Colors.grey;
-              }),color: myColorFour,),
-              IconButton(icon: Icon(Icons.star),
-              onPressed: ()=>setState((){
-                myColorOne=Colors.orange;
-                myColorTwo=Colors.orange;
-                myColorThree=Colors.orange;
-                myColorFour=Colors.orange;
-                myColorFive=Colors.orange;
-              }),color: myColorFive,),
-            ],
-        ),
+    _buddies = makeBuddyList(context);
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Rate Buddies'),
+        centerTitle: true,
+      ),
+      body: ListView.builder(
+        itemCount: _buddies.length,
+        itemBuilder: (context, index) {
+          final buddy = _buddies[index];
+          return Card(
+            child: ListTile(
+              title: Text(buddy.name),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: _stars.map((star) {
+                  return IconButton(
+                    onPressed: () {
+                      setState(() {
+                        buddy.rating = star;
+                      });
+                    },
+                    icon: Icon(
+                      star <= buddy.rating ? Icons.star : Icons.star_border,
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          final List<int> ratings =
+              _buddies.map((buddy) => buddy.rating).toList();
+          print('Buddies ratings: $ratings');
+        },
+        child: const Icon(Icons.check),
       ),
     );
   }
