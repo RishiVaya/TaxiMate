@@ -69,6 +69,10 @@ final GoRouter _router = GoRouter(
       path: '/spotify',
       builder: (context, state) => SpotifyPage(),
     ),
+    GoRoute(
+      path: '/ratebuddies',
+      builder: (context, state) => RateBuddies(),
+    ),
   ],
 );
 

@@ -176,7 +176,8 @@ Future<List<Buddy>> makeBuddyList(BuildContext context) async {
   List<Buddy> buddies = [];
   for (var request in requests) {
     if (request["userInfo"]["userId"] != currUser?.uid) {
-      buddies.add(Buddy(request["userInfo"]["name"],0,request["userInfo"]["userId"]));
+      var user = await Firestore().getUser(request["userInfo"]["userId"]);
+      buddies.add(Buddy(user?["name"],0,request["userInfo"]["userId"]));
     }
   }
   var offer = await Firestore().getOffer(appData.offerId);
@@ -231,7 +232,7 @@ class _RateBuddies extends State<RateBuddies> {
                             });
                           },
                           icon: Icon(
-                            buddy != null ? (star <= buddy.rating ? Icons.star : Icons.star_border): Icons.star,
+                            buddy != null ? (star <= buddy.rating ? Icons.star : Icons.star_border): Icons.star_border,
                           ),
                         );
                       }).toList(),
@@ -242,12 +243,12 @@ class _RateBuddies extends State<RateBuddies> {
             ),
             floatingActionButton: FloatingActionButton(
               onPressed: () {
-                for (Buddy buddy in buddies.data?.toList() ?? []) {
-                  Firestore().addPassengerRating(buddy.rating as Int, buddy.userId);
-                }
-                final List<int> ratings =
-                  buddies.data?.map((buddy) => buddy.rating).toList() ?? [];
-                print('Buddies ratings: $ratings');
+                // for (Buddy buddy in buddies.data?.toList() ?? []) {
+                //   Firestore().addPassengerRating(buddy.rating as Int, buddy.userId);
+                // }
+                // final List<int> ratings =
+                //   buddies.data?.map((buddy) => buddy.rating).toList() ?? [];
+                // print('Buddies ratings: $ratings');
                 context.go('/');
               },
               child: const Icon(Icons.check),
