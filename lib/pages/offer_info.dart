@@ -27,7 +27,7 @@ class _OfferInfoState extends State<OfferInfo> {
                 .snapshots(),
             builder: (context, snapshot) {
               print(
-                  "HEY ${snapshot.data != null ? snapshot.data?.data() : ''}");
+                  "HEY OFFERS ${snapshot.data != null ? snapshot.data?.data() : ''}");
               return Placeholder();
             })
         : Placeholder();

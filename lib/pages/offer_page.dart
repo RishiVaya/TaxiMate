@@ -1,8 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:taximate/firebase_firestore/firestore.dart';
-
+import 'package:taximate/pages/offer_info.dart';
 import '../models/app_data.dart';
 
 class OfferPage extends StatefulWidget {
@@ -10,14 +11,8 @@ class OfferPage extends StatefulWidget {
   State<OfferPage> createState() => _OfferPageState();
 }
 
-// void setTripLocation(String location) {}
-
-// void setTripCriteria(String criteria) {}
-
-// void setSelectedOffer() {}
-
 class _OfferPageState extends State<OfferPage> {
-  List<int> offers = [1, 2, 3];
+  List requests = [];
   bool showOffers = false;
   int _currentIndex = 0;
   Map<int, String> pagesMap = {0: '/'};
@@ -29,84 +24,137 @@ class _OfferPageState extends State<OfferPage> {
     context.go('${pagesMap[index]}');
   }
 
-  void _findOffer() {
-    if (offers.isEmpty) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('Sorry'),
-            content: Text(
-              'There are Currently No Offers Available',
-              textAlign: TextAlign.center,
-            ),
-            actions: <Widget>[
-              TextButton(
-                child: Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
-    } else {
-      setState(() {
-        showOffers = true;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     var appData = context.watch<AppDataModel>();
 
+    Future<List> retrieveRequests() async {
+      var ans = await Firestore().getRequestsForOffer(appData.offerId);
+      if (ans.isEmpty) {
+        showOffers = false;
+      } else {
+        setState(() {
+          requests = ans;
+          showOffers = true;
+        });
+      }
+      return ans;
+    }
+
+    StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .collection('carpool_offers')
+            .doc(appData.offerId)
+            .snapshots(),
+        builder: (context, snapshot) {
+          retrieveRequests();
+          return Placeholder();
+        });
+
+    void selectRequest(String requestId) async {
+      var offerId = appData.offerId;
+      await Firestore().selectRequest(offerId, requestId);
+    }
+
     void _oncancel() async {
-      await Firestore().updateOfferStatus(appData.offerId, false);
+      // await Firestore().updateCarpoolOfferStatusoffer(appData.offerId, true);
       context.go('/');
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("Offers"),
+        title: const Text("Requests"),
         centerTitle: true,
       ),
-      body: Center(
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              height: 25,
-            ),
-            ElevatedButton(
-              onPressed: _findOffer,
-              child: Text('Find offer'),
-            ),
-            if (showOffers)
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: ListView.builder(
-                    itemCount: offers.length,
-                    itemBuilder: (context, index) {
-                      return Text('${offers[index]}');
-                    },
+      body: StreamBuilder<DocumentSnapshot>(
+          stream: FirebaseFirestore.instance
+              .collection('carpool_offers')
+              .doc(appData.offerId)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Placeholder();
+            }
+            retrieveRequests();
+            print(requests);
+            return Center(
+              child: Column(
+                children: <Widget>[
+                  const SizedBox(
+                    height: 25,
                   ),
-                ),
-              ),
-            Expanded(
-                child: Align(
-                    alignment: Alignment.bottomCenter,
+                  Container(
+                    height: 50,
                     child: ElevatedButton(
-                      onPressed: () {
-                        _oncancel();
-                        //context.go('/');
-                      },
-                      child: const Text('CANCEL TRIP'),
-                    ))),
-          ],
-        ),
-      ),
+                      onPressed: () => {},
+                      child: const Text('FIND OFFERS'),
+                    ),
+                  ),
+                  if (showOffers)
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: ListView.builder(
+                          itemCount: requests.length,
+                          itemBuilder: (context, index) {
+                            return Card(
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  backgroundColor: const Color(0xff764abc),
+                                  child: Text('sd'),
+                                ),
+                                // title: Text(requests[index]['userInfo']['name']),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(height: 10),
+                                    Text(
+                                        "Pickup Location - ${requests[index]['tripData']['pickup'][0]['address']}"),
+                                    Text(
+                                        "Dropoff Location - ${requests[index]['tripData']['dropoff'][0]['address']}"),
+                                    Text(
+                                        "Rating - ${requests[index]['userInfo']['rating']}"),
+                                    Text("Fare - "),
+                                    Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          ElevatedButton(
+                                            onPressed: () {},
+                                            child: const Text('Select'),
+                                          ),
+                                        ]),
+                                  ],
+                                ),
+                                onTap: () {
+                                  selectRequest(
+                                      requests[index]['tripData']['reqId']);
+                                },
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  Container(
+                    height: 50,
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor:
+                              MaterialStateProperty.all(Colors.red),
+                        ),
+                        onPressed: _oncancel,
+                        child: const Text('CANCEL TRIP'),
+                      ),
+                    ),
+                  ),
+                  const OfferInfo()
+                ],
+              ),
+            );
+          }),
     );
   }
 }
